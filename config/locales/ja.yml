@@ -269,9 +269,9 @@ ja:
     digest:
       body: "%{instance} での最後のログインからの出来事:"
       mention: "%{name} さんがあなたに返信しました:"
-      new_followers_summary:
-        one: 新たなフォロワーを獲得しました！
-        other: "%{count} 人の新たなフォロワーを獲得しました！"
+      new_followers_summary
+        one: 新たなフォロワーを獲得しました!
+        other: "%{count} 人の新たなフォロワーを獲得しました!"
       subject:
         one: "新しい1件の通知 \U0001F418"
         other: "新しい%{count}件の通知 \U0001F418"
