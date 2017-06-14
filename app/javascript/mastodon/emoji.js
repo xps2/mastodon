@@ -32,6 +32,6 @@ const shortnameToImage = str => str.replace(emojione.regShortNames, shortname =>
 
 export default function emojify(text) {
   return toImage(text).replace(/5,?000\s*兆円/g, (m) => {
-    return `<img alt="${m}" src="/emoji/5000tyoen.png"/>`
+    return `<img alt="${m}" src="/emoji/5000tyoen.svg"/>`
   })
 };
