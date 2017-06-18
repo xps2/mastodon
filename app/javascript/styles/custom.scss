@@ -1,0 +1,37 @@
+@keyframes v6don-kira {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.85);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes v6don-nobi {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1);
+  }
+  52% {
+    transform: scale(1.1, 1.6);
+  }
+  60%{
+    transform: scale(1);
+  }
+}
+
+.v6don-kira {
+  display: inline-block;
+  animation: v6don-kira 0.8s infinite;
+}
+.v6don-nobi {
+  display: inline-block;
+  animation: v6don-nobi 1.8s infinite;
+  transform-origin: center bottom;  
+}
+
+@import 'application';
