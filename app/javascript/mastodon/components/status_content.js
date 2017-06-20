@@ -7,6 +7,8 @@ import { isRtl } from '../rtl';
 import { FormattedMessage } from 'react-intl';
 import Permalink from './permalink';
 
+import localQuote from '../quote';
+
 class StatusContent extends React.PureComponent {
 
   static contextTypes = {
@@ -112,8 +114,8 @@ class StatusContent extends React.PureComponent {
 
     const hidden = this.props.onExpandedToggle ? !this.props.expanded : this.state.hidden;
 
-    const content = { __html: emojify(status.get('content')) };
-    const spoilerContent = { __html: emojify(escapeTextContentForBrowser(status.get('spoiler_text', ''))) };
+    const content = { __html: emojify(localQuote(status.get('content'))) };
+    const spoilerContent = { __html: emojify(localQuote(escapeTextContentForBrowser(status.get('spoiler_text', '')))) };
     const directionStyle = { direction: 'ltr' };
 
     if (isRtl(status.get('search_index'))) {

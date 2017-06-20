@@ -5,6 +5,8 @@ import emojify from '../mastodon/emoji';
 import { getLocale } from '../mastodon/locales';
 import loadPolyfills from '../mastodon/load_polyfills';
 
+import localQuote from '../mastodon/quote';
+
 require.context('../images/', true);
 
 const { localeData } = getLocale();
@@ -20,6 +22,10 @@ function loaded() {
     minute: 'numeric',
   });
   const relativeFormat = new IntlRelativeFormat(locale);
+
+  [].forEach.call(document.querySelectorAll('.e-content'), (content) => {
+    content.innerHTML = localQuote(content.innerHTML);
+  });
 
   [].forEach.call(document.querySelectorAll('.emojify'), (content) => {
     content.innerHTML = emojify(content.innerHTML);

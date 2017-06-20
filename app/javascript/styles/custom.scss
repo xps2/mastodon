@@ -34,4 +34,17 @@
   transform-origin: center bottom;  
 }
 
+.status__content blockquote {
+  color: #0e7f28;
+  border-right: solid 3px #0e7f28;
+  padding-right: 2px;
+}
+
+.e-content blockquote {
+}
+
+.status__content p + blockquote {
+  margin-top: -20px;
+}
+
 @import 'application';

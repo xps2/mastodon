@@ -51,7 +51,7 @@ const localEmoji = {
     {
       re: /((?:✨|(?::sparkles:))+)( ?IPv6[^<>\s]*? ?)((?:✨|(?::sparkles:))+)/ug,
       fmt: (m, s1, ip, s2) => {
-        var f = k => k.replace(/✨/g, "<kira1/>").replace(/:sparkles:/g, "<kira2/>");
+        var f = k => k.replace(/✨|:sparkles:/g, "<kira/>")
         
         for (var iptrim = ip.slice(ip.indexOf("IPv6") + 4), len = 0; iptrim.length && len < 7; len++) {
           if (iptrim[0] == ":") {
@@ -78,21 +78,21 @@ const localEmoji = {
     {re: /5,?000\s?兆円/g, img: '5000tyoen.svg'},
     {re: /5,?000兆/g, img: '5000tyo.svg'},
   ],
-  post_raw: [],
-  post_all: [
-    {re: /<kira1\/>/g, fmt: () => `<span class="v6don-kira">${unicodeToImage("✨")}</span>`},
-    {re: /<kira2\/>/g, fmt: () => `<span class="v6don-kira">${unicodeToImage(":sparkles:")}</span>`},
-    {re: /<ipv6>(.*?)<\/ipv6>/mg, fmt: (m, ip) => `<span class="v6don-nobi">${ip}</span>`},
+  post: [
+    {tag: true, re: /<kira\/>/g, fmt: `<span class="v6don-kira">${unicodeToImage("✨")}</span>`},
+    {tag: true, re: /<ipv6>(.*?)<\/ipv6>/mg, fmt: (m, ip) => `<span class="v6don-nobi">${ip}</span>`},
   ],
 };
 
 export default function emojify(text) {
   var tr = arr =>
-    arr.reduce((t, e) =>
+    arr.reduce((t, e) => e.tag ?
+      t.replace(e.re, e.fmt) :
       t.replace(/([^<]*)(<[^>]*>)?/mg, (all, raw, tag) =>
-        raw.replace(e.re, e.fmt) + (tag || '')), text)
+        raw.replace(e.re, e.fmt) + (tag || ''))
+    , text);
 
-  text = tr(localEmoji.pre)
+  text = tr(localEmoji.pre);
   
   text = toImage(text);
   
@@ -100,8 +100,7 @@ export default function emojify(text) {
     e.fmt = (m) => `<img alt="${hesc(m)}" src="/emoji/${e.img}"/>`;
     return e;
   }))
-  text = tr(localEmoji.post_raw);
-  text = localEmoji.post_all.reduce((t, e) => t.replace(e.re, e.fmt), text);
+  text = tr(localEmoji.post);
   
   return text;
 };
