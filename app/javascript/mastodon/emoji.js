@@ -73,6 +73,10 @@ const localEmoji = {
         return `${f(s1)}<ipv6>${ip}</ipv6>${f(s2)}`;
       }
     },
+    {
+      re: /:[\dA-Fa-f]{2,4}:/g,
+      fmt: af => hesc(af)
+    },
   ],
   stamp: [
     {re: /5,?000\s?兆円/g, img: '5000tyoen.svg'},

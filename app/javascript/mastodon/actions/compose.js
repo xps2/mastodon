@@ -73,7 +73,10 @@ export function mentionCompose(account, router) {
 
 export function submitCompose() {
   return function (dispatch, getState) {
-    const status = emojione.shortnameToUnicode(getState().getIn(['compose', 'text'], ''));
+    const status = emojione.shortnameToUnicode(
+      getState().getIn(['compose', 'text'], '').replace(
+        /:[\dA-Fa-f]{2}:/g, hex => hex.replace(/./g, af => String.fromCodePoint(0xfff00 + (af.charCodeAt(0))))
+      )).replace(/[\u{fff20}-\u{fff7f}]/ug, c => String.fromCharCode(c.codePointAt(0) - 0xfff00));
     if (!status || !status.length) {
       return;
     }
