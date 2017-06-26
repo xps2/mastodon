@@ -83,7 +83,7 @@ const localEmoji = {
     {re: /5,?000兆/g, img: '5000tyo.svg'},
   ],
   post: [
-    {re: /:realtek:/g, fmt: `<img alt=":realtek:" title=":realtek:" class="emojione" src="/emoji/proprietary/realtek.svg" style="width: 79px"/>`},
+    {re: /:realtek:/g, fmt: `<img alt=":realtek:" title=":realtek:" class="emojione" src="/emoji/proprietary/realtek.svg" style="width: 4.92em"/>`},
     {tag: true, re: /(<a\s[^>]*>)(.*?:don:.*?)<\/a>/mg, fmt: (all, tag, text) => tag + 
       text.replace(/:don:/g, hesc(":don:")) + "</a>"
     },
