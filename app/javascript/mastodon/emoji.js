@@ -83,6 +83,11 @@ const localEmoji = {
     {re: /5,?000兆/g, img: '5000tyo.svg'},
   ],
   post: [
+    {re: /:realtek:/g, fmt: `<img alt=":realtek:" title=":realtek:" class="emojione" src="/emoji/proprietary/realtek.svg" style="width: 79px"/>`},
+    {tag: true, re: /(<a\s[^>]*>)(.*?:don:.*?)<\/a>/mg, fmt: (all, tag, text) => tag + 
+      text.replace(/:don:/g, hesc(":don:")) + "</a>"
+    },
+    {re: /:don:/g, fmt: `<a href="https://mstdn.maud.io/">:don:</a>`},
     {tag: true, re: /<kira\/>/g, fmt: `<span class="v6don-kira">${unicodeToImage("✨")}</span>`},
     {tag: true, re: /<ipv6>(.*?)<\/ipv6>/mg, fmt: (m, ip) => `<span class="v6don-nobi">${ip}</span>`},
   ],
