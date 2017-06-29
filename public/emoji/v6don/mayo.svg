@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="16mm" width="16mm" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="0 0 16 16">
+<g fill-rule="evenodd" transform="translate(0,-281)">
+<path d="m11.6 4.44-3.56 3.54-3.54 3.52c17.6 18-0.39 20.3 26 46.7 3.87 3.87 12.2 1.72 20.8-6.91 8.7-8.7 10.8-17 6.9-20.9-26.3-26.3-28.6-8.4-46.6-26z" transform="matrix(.265 0 0 .265 0 281)" fill="#fff3c5"/>
+<path d="m7.65 0.395c-0.53 0.067-1.95 0.985-4.08 3.12-2.13 2.13-3.34 3.98-3.09 4.23l4.47 4.45c-0.36-0.3 0.96-2.1 3.09-4.22 2.16-2.13 3.86-3.45 4.26-3.09l-4.49-4.46c-0.03-0.034-0.09-0.045-0.16-0.035z" transform="matrix(.265 0 0 .265 0 281)" fill="#ff623e"/>
+</g>
+</svg>
