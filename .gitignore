@@ -58,3 +58,4 @@ yarn-debug.log
 docker-compose.override.yml
 
 public/emoji/proprietary
+public/emoji/**/*.gz
