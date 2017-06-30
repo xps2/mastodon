@@ -21,7 +21,7 @@ const unicodeToImage = str => {
 };
 
 const shortnameToImage = str => str.replace(/([^<]*)(<[^>]*>)?/mg, (all, raw, tag) => {
-  let insideShortname = false;
+  let insideShortname = true;
   return raw.split(":").reduce((rtn, shortname) => {
     if (insideShortname) {
       if (shortname in emojione.emojioneList) {
@@ -37,7 +37,7 @@ const shortnameToImage = str => str.replace(/([^<]*)(<[^>]*>)?/mg, (all, raw, ta
       insideShortname = true;
     }
     return rtn;
-  }, "") + (tag || "");
+  }) + (tag || "");
 });
 
 export default function emojify(text) {
