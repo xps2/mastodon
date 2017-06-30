@@ -22,18 +22,19 @@ const unicodeToImage = str => {
 
 const shortnameToImage = str => str.replace(/([^<]*)(<[^>]*>)?/mg, (all, raw, tag) => {
   let insideShortname = true;
-  return raw.split(":").reduce((rtn, shortname) => {
+  return raw.split(":").reduce((rtn, txt) => {
     if (insideShortname) {
+      let shortname = `:${txt}:`;
       if (shortname in emojione.emojioneList) {
         const unicode = emojione.emojioneList[shortname].unicode[emojione.emojioneList[shortname].unicode.length - 1];
         const alt = emojione.convert(unicode.toUpperCase());
         rtn += `<img draggable="false" class="emojione" alt="${alt}" title="${shortname}" src="/emoji/${unicode}.svg" />`;
         insideShortname = false;
       }
-      else rtn += ":" + shortname;
+      else rtn += ":" + txt;
     }
     else {
-      rtn += shortname;
+      rtn += txt;
       insideShortname = true;
     }
     return rtn;
