@@ -23,6 +23,17 @@
     transform: scale(1);
   }
 }
+@keyframes v6don-wave {
+  0% {
+    transform: translateY(0);
+  }
+  4% {
+    transform: translateY(-0.25em);
+  }
+  10% {
+    transform: translateY(0);
+  }
+}
 
 .v6don-kira {
   display: inline-block;
@@ -32,6 +43,10 @@
   display: inline-block;
   animation: v6don-nobi 1.8s infinite;
   transform-origin: center bottom;  
+}
+.v6don-wave {
+  display: inline-block;
+  animation: v6don-wave 2s infinite;
 }
 
 .status__content blockquote {

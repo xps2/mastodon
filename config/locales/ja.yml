@@ -204,7 +204,7 @@ ja:
   applications:
     invalid_url: URLが無効です
   auth:
-    change_password: ログイン情報
+    change_password: セキュリティ
     delete_account: アカウントの削除
     delete_account_html: アカウントを削除したい場合、<a href="%{path}">こちら</a>から手続きが行えます。削除前には確認画面があります。
     didnt_get_confirmation: 確認メールを受信できませんか?
@@ -385,7 +385,7 @@ ja:
       unlisted_long: 誰でも見ることができますが、公開タイムラインには表示されません
   stream_entries:
     click_to_show: クリックして表示
-    reblogged: ブーストされました
+    reblogged: さんにブーストされました
     sensitive_content: 閲覧注意
   time:
     formats:

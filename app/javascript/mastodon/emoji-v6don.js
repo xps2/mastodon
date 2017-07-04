@@ -1,5 +1,5 @@
 const hesc = raw => {
-  var ent = false;
+  let ent = false;
   return raw.replace(/./ug, c => {
     if (ent) {
       if (c == ';') ent = false;
@@ -16,35 +16,7 @@ const hesc = raw => {
 
 const localEmoji = {
   pre: [
-    {
-      re: /((?:✨|(?::sparkles:))+)( ?IPv6[^<>\s]*? ?)((?:✨|(?::sparkles:))+)/ug,
-      fmt: (m, s1, ip, s2) => {
-        var f = k => k.replace(/✨|:sparkles:/g, s => `<kira>${s}</kira>`);
-        
-        for (var iptrim = ip.slice(ip.indexOf("IPv6") + 4), len = 0; iptrim.length && len < 7; len++) {
-          if (iptrim[0] == ":") {
-            var rr = /^:[\w\d-]+:/.exec(iptrim);
-            if (!rr) return m;
-            iptrim = iptrim.slice(rr[0].length);
-          }
-          else if (iptrim[0] == "&") {
-            iptrim = iptrim.replace(/&.*?;/, "");
-          }
-          else if (iptrim.codePointAt(0) >= 65536) {
-            iptrim = iptrim.slice(2);
-          }
-          else {
-            iptrim = iptrim.slice(1);
-          }
-        }
-        if (iptrim.length) return m;
-        return `${f(s1)}<ipv6>${ip}</ipv6>${f(s2)}`;
-      }
-    },
-    {
-      re: /:[\dA-Fa-f]{2,4}:/g,
-      fmt: af => hesc(af)
-    },
+    {re: /:[\dA-Fa-f]{2,4}:/g, fmt: af => hesc(af)},
   ],
   post: [
     {tag: true, re: /(<a\s[^>]*>)(.*?:don:.*?)<\/a>/mg, fmt: (all, tag, text) => tag + 
@@ -52,7 +24,7 @@ const localEmoji = {
     },
     {re: /:don:/g, fmt: `<a href="https://mstdn.maud.io/">:don:</a>`},
     {tag: true, re: /<kira>(.*?)<\/kira>/mg, fmt: (m, ip) => `<span class="v6don-kira">${ip}</span>`},
-    {tag: true, re: /<ipv6>(.*?)<\/ipv6>/mg, fmt: (m, ip) => `<span class="v6don-nobi">${ip}</span>`},
+    {tag: true, re: /<ipv6 ([^>]*)>(.*?)<\/ipv6>/mg, fmt: (m, style, txt) => `<span class="v6don-wave" ${style}>${txt}</span>`},
   ],
 };
 
@@ -63,6 +35,56 @@ localEmoji.post.push(...[
     e.fmt = (m) => `<img alt="${hesc(m)}" src="/emoji/v6don/${e.img}"/>`;
     return e;
 }));
+
+localEmoji.pre.push({
+  re: /((?:✨|(?::sparkles:))+)( ?IPv6[^<>\s]*? ?)((?:✨|(?::sparkles:))+)/ug,
+  fmt: (m, s1, ip, s2) => {
+    let f = k => k.replace(/✨|:sparkles:/g, s => `<kira>${s}</kira>`);
+    
+    let ipdeco = ""
+    for (let chars = 0, delay = 0; ip.length && chars < 11; chars++) {
+      let deco = true, decolen;
+      let rr = /^\s/u.exec(ip);
+      if (rr) {
+        deco = false;
+        decolen = rr[0].length;
+      }
+      else if (ip[0] == ":") {
+        rr = /^:[\w\d-]+:/.exec(ip);
+        if (!rr) {
+          return m;
+        }
+        decolen = rr[0].length;
+      }
+      else if (ip[0] == "&") {
+        rr = /&.*?;/.exec(ip);
+        decolen = rr[0].length;
+      }
+      else if ((rr = /^5,?000\s?兆円?/.exec(ip))) {
+        decolen = rr[0].length
+      }
+      else if (ip.codePointAt(0) >= 65536) {
+        decolen = 2;
+      }
+      else {
+        decolen = 1;
+      }
+      
+      if (deco) {
+        ipdeco += `<ipv6 style="animation-delay: ${delay}ms">${ip.slice(0, decolen)}</ipv6>`;
+        delay += 100;
+      }
+      ip = ip.slice(decolen);
+    }
+    
+    if (ip.length) {
+      return m;
+    }
+    
+    return `${f(s1)}${ipdeco}${f(s2)}`;
+  }
+});
+
 
 localEmoji.post.push(...[
   {re: /:realtek:/g, img: "../proprietary/realtek.svg", width: 4.92},
