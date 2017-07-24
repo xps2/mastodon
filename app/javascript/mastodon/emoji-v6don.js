@@ -37,7 +37,15 @@ localEmoji.post.push(...[
 }));
 
 localEmoji.pre.push({
-  re: /((?:✨|(?::sparkles:))+)( ?IPv6[^<>\s]*? ?)((?:✨|(?::sparkles:))+)/ug,
+  re: /(‡+|†+)([^†‡]{1,30}?)(‡+|†+)/g,
+  fmt: (m, d1, txt, d2) => {
+    if (d1[0] != d2[0]) return m;
+    return `<span class="v6don-tyu2"><span class="v6don-dagger">${d1}</span>${txt}<span class="v6don-dagger">${d2}</span></span>`;
+  }
+});
+
+localEmoji.pre.push({
+  re: /((?:✨|(?::sparkles:))+)( ?IPv6.{0,30}?)((?:✨|(?::sparkles:))+)/ug,
   fmt: (m, s1, ip, s2) => {
     let f = k => k.replace(/✨|:sparkles:/g, s => `<kira>${s}</kira>`);
     
@@ -60,6 +68,11 @@ localEmoji.pre.push({
         rr = /&.*?;/.exec(ip);
         decolen = rr[0].length;
       }
+      else if (ip[0] == "<") {
+        deco = false;
+        rr = /<[^>]*?>/.exec(ip);
+        decolen = rr[0].length;
+      }
       else if ((rr = /^5,?000\s?兆円?/.exec(ip))) {
         decolen = rr[0].length
       }
@@ -73,6 +86,9 @@ localEmoji.pre.push({
       if (deco) {
         ipdeco += `<ipv6 style="animation-delay: ${delay}ms">${ip.slice(0, decolen)}</ipv6>`;
         delay += 100;
+      }
+      else {
+        ipdeco += ip.slice(0, decolen);
       }
       ip = ip.slice(decolen);
     }
