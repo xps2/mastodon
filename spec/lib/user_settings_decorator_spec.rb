@@ -28,6 +28,20 @@ describe UserSettingsDecorator do
       expect(user.settings['default_privacy']).to eq 'public'
     end
 
+    it 'updates the user settings value for sensitive' do
+      values = { 'setting_default_sensitive' => '1' }
+
+      settings.update(values)
+      expect(user.settings['default_sensitive']).to eq true
+    end
+
+    it 'updates the user settings value for unfollow modal' do
+      values = { 'setting_unfollow_modal' => '0' }
+
+      settings.update(values)
+      expect(user.settings['unfollow_modal']).to eq false
+    end
+
     it 'updates the user settings value for boost modal' do
       values = { 'setting_boost_modal' => '1' }
 

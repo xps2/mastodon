@@ -6,6 +6,7 @@ import emojify from '../emoji';
 import { isRtl } from '../rtl';
 import { FormattedMessage } from 'react-intl';
 import Permalink from './permalink';
+import classnames from 'classnames';
 
 import localQuote from '../quote';
 
@@ -19,7 +20,6 @@ export default class StatusContent extends React.PureComponent {
     status: ImmutablePropTypes.map.isRequired,
     expanded: PropTypes.bool,
     onExpandedToggle: PropTypes.func,
-    onHeightUpdate: PropTypes.func,
     onClick: PropTypes.func,
   };
 
@@ -46,10 +46,11 @@ export default class StatusContent extends React.PureComponent {
       } else if (link.textContent[0] === '#' || (link.previousSibling && link.previousSibling.textContent && link.previousSibling.textContent[link.previousSibling.textContent.length - 1] === '#')) {
         link.addEventListener('click', this.onHashtagClick.bind(this, link.text), false);
       } else {
-        link.setAttribute('target', '_blank');
-        link.setAttribute('rel', 'noopener');
         link.setAttribute('title', link.href);
       }
+
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener');
     }
   }
 
@@ -58,14 +59,11 @@ export default class StatusContent extends React.PureComponent {
   }
 
   componentDidUpdate () {
-    if (this.props.onHeightUpdate) {
-      this.props.onHeightUpdate();
-    }
     this._updateStatusLinks();
   }
 
   onMentionClick = (mention, e) => {
-    if (e.button === 0) {
+    if (this.context.router && e.button === 0) {
       e.preventDefault();
       this.context.router.history.push(`/accounts/${mention.get('id')}`);
     }
@@ -74,7 +72,7 @@ export default class StatusContent extends React.PureComponent {
   onHashtagClick = (hashtag, e) => {
     hashtag = hashtag.replace(/^#/, '').toLowerCase();
 
-    if (e.button === 0) {
+    if (this.context.router && e.button === 0) {
       e.preventDefault();
       this.context.router.history.push(`/timelines/tag/${hashtag}`);
     }
@@ -126,6 +124,9 @@ export default class StatusContent extends React.PureComponent {
     const content = { __html: emojify(localQuote(status.get('content'))) };
     const spoilerContent = { __html: emojify(localQuote(escapeTextContentForBrowser(status.get('spoiler_text', '')))) };
     const directionStyle = { direction: 'ltr' };
+    const classNames = classnames('status__content', {
+      'status__content--with-action': this.props.onClick && this.context.router,
+    });
 
     if (isRtl(status.get('search_index'))) {
       directionStyle.direction = 'rtl';
@@ -147,7 +148,7 @@ export default class StatusContent extends React.PureComponent {
       }
 
       return (
-        <div className='status__content status__content--with-action' ref={this.setRef} onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp}>
+        <div className={classNames} ref={this.setRef} onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp}>
           <p style={{ marginBottom: hidden && status.get('mentions').isEmpty() ? '0px' : null }}>
             <span dangerouslySetInnerHTML={spoilerContent} />
             {' '}
@@ -163,7 +164,7 @@ export default class StatusContent extends React.PureComponent {
       return (
         <div
           ref={this.setRef}
-          className='status__content status__content--with-action'
+          className={classNames}
           style={directionStyle}
           onMouseDown={this.handleMouseDown}
           onMouseUp={this.handleMouseUp}

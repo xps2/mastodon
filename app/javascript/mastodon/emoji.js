@@ -1,9 +1,9 @@
+import { unicodeMapping } from './emojione_light';
 import emojione from 'emojione';
 import Trie from 'substring-trie';
 import toV6donEmoji from './emoji-v6don';
 
-const mappedUnicode = emojione.mapUnicodeToShort();
-const trie = new Trie(Object.keys(emojione.jsEscapeMap));
+const trie = new Trie(Object.keys(unicodeMapping));
 
 const emojify = str => str.replace(/([^<]*)(<[^>]*>)?/mg, (all, raw, tag) => {
   const u2i = txt => {
@@ -15,12 +15,10 @@ const emojify = str => str.replace(/([^<]*)(<[^>]*>)?/mg, (all, raw, tag) => {
     }
     if (match) {
       const unicodeStr = match;
-      if (unicodeStr in emojione.jsEscapeMap) {
-        const unicode  = emojione.jsEscapeMap[unicodeStr];
-        const short    = mappedUnicode[unicode];
-        const filename = emojione.emojioneList[short].fname;
-        const alt      = emojione.convert(unicode.toUpperCase());
-        const replacement = `<img draggable="false" class="emojione" alt="${alt}" title="${short}" src="/emoji/${filename}.svg" />`;
+      if (unicodeStr in unicodeMapping) {
+        const [filename, shortCode] = unicodeMapping[unicodeStr];
+        const alt      = unicodeStr;
+        const replacement = `<img draggable="false" class="emojione" alt="${alt}" title=":${shortCode}:" src="/emoji/${filename}.svg" />`;
         rtn += replacement + u2i(txt.slice(unicodeStr.length));
       }
     }
