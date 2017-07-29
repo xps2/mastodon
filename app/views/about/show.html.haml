@@ -33,7 +33,10 @@
             - else
               = link_to t('auth.login'), new_user_session_path, class: 'webapp-btn'
           %li= link_to t('about.about_this'), about_more_path
-          %li= link_to t('about.other_instances'), 'https://joinmastodon.org/'
+          %li
+            = link_to 'https://joinmastodon.org/' do
+              = "#{t('about.other_instances')}"
+              %i.fa.fa-external-link{ style: 'padding-left: 5px;' }
 
       .container.hero
         .floats
@@ -73,5 +76,5 @@
   .footer-links
     .container
       %p
-        = link_to t('about.source_code'), 'https://js4.in/repo/gitweb.cgi?p=v6don'
+        = link_to t('about.source_code'), 'https://js4.in/repo/gitweb.cgi/v6don'
         = " (#{@instance_presenter.version_number})"

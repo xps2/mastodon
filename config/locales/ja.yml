@@ -2,7 +2,7 @@
 ja:
   about:
     about_mastodon_html: Mastodonは、オープンなウェブプロトコルを採用した、自由でオープンソースなソーシャルネットワークです。電子メールのような分散型の仕組みを採っています。
-    about_this: このインスタンスについて
+    about_this: 詳細情報
     closed_registrations: 現在このインスタンスでの新規登録は受け付けていません。しかし、他のインスタンスにアカウントを作成しても全く同じネットワークに参加することができます。
     contact: 連絡先
     description_headline: "%{domain}とは?"
@@ -19,19 +19,15 @@ ja:
       within_reach_title: いつでも身近に
     find_another_instance: 他のインスタンスを探す
     generic_description: "%{domain} は、Mastodonインスタンスの一つです。"
-    get_started: 参加する
     hosted_on: Mastodon hosted on %{domain}
     learn_more: もっと詳しく
-    links: リンク
     other_instances: 他のインスタンス
     source_code: ソースコード
     status_count_after: トゥート
     status_count_before: トゥート数
-    terms: プライバシーポリシー
     user_count_after: 人
     user_count_before: ユーザー数
-    version: バージョン
-    what_is_mastodon: Mastodon とは？
+    what_is_mastodon: Mastodonとは?
   accounts:
     follow: フォロー
     followers: フォロワー
@@ -134,7 +130,7 @@ ja:
       title: 既知のインスタンス
     reports:
       action_taken_by: レポート処理者
-      are_you_sure: 本当に実行しますか？
+      are_you_sure: 本当に実行しますか?
       comment:
         label: コメント
         none: なし
@@ -204,7 +200,7 @@ ja:
       confirmed: 確認済み
       expires_in: 期限
       last_delivery: 最終配送
-      title: PubSubHubbub
+      title: WebSub
       topic: トピック
     title: 管理
   admin_mailer:
@@ -222,8 +218,8 @@ ja:
     change_password: セキュリティ
     delete_account: アカウントの削除
     delete_account_html: アカウントを削除したい場合、<a href="%{path}">こちら</a>から手続きが行えます。削除する前に、確認画面があります。
-    didnt_get_confirmation: 確認メールを受信できませんか？
-    forgot_password: パスワードをお忘れですか？
+    didnt_get_confirmation: 確認メールを受信できませんか?
+    forgot_password: パスワードをお忘れですか?
     login: ログイン
     logout: ログアウト
     register: 登録する
@@ -339,7 +335,7 @@ ja:
   pagination:
     next: 次
     prev: 前
-    truncate: "&hellip;"
+    truncate: "…"
   push_notifications:
     favourite:
       title: あなたのトゥートが %{name} さんにお気に入り登録されました
@@ -399,7 +395,7 @@ ja:
     title: セッション
   settings:
     authorized_apps: 認証済みアプリ
-    back: 戻る
+    back: Mastodon に戻る
     delete: アカウントの削除
     edit_profile: プロフィールを編集
     export: データのエクスポート
@@ -427,7 +423,7 @@ ja:
     body_html: |
       <h2>プライバシーポリシー</h2>
 
-      <h3 id="collect">どのような情報を収集するのですか？</h3>
+      <h3 id="collect">どのような情報を収集するのですか?</h3>
 
       <p>あなたがこのサイトに登録すると、ここで共有された情報を読んだり、書いたり、評価したりして、フォーラムでの情報を集める事ができます。</p>
 
@@ -435,7 +431,7 @@ ja:
 
       <p>アカウントを登録し、投稿を行った際にはその投稿が行われたIPアドレスを記録します。また、このサーバーに対する全てのリクエストはIPアドレスを含むサーバーログとして保管されます。</p>
 
-      <h3 id="use">自分の情報を何に使うのですか？</h3>
+      <h3 id="use">自分の情報を何に使うのですか?</h3>
 
       <p>このサイトで収集された情報は、次のいくつかの方法で使用されます:</p>
 
@@ -446,11 +442,11 @@ ja:
         <li>定期メールの送信 &mdash; メールアドレスは、情報の送信、トピックの変更やユーザー名に関係するお知らせ、お問い合わせに関する返答、その他のリクエストや質問に関してお知らせするために使用されます。</li>
       </ul>
 
-      <h3 id="protect">自分の情報はどのように保護されるのですか？</h3>
+      <h3 id="protect">自分の情報はどのように保護されるのですか?</h3>
 
       <p>このサービスはあなたの個人情報の入力、送信、またはアクセスに際してあなたの個人情報の安全性を維持するために様々なセキュリティ手段をとっています。</p>
 
-      <h3 id="data-retention">データ保持のポリシーはどのようになっていますか？</h3>
+      <h3 id="data-retention">データ保持のポリシーはどのようになっていますか?</h3>
 
       <p>このサービスはデータ保持に関して次のことを行うよう努めます。:</p>
 
@@ -459,13 +455,13 @@ ja:
         <li>登録されたユーザーとその投稿に関連付けされたIPアドレスを5年以内に渡って保持します。</li>
       </ul>
 
-      <h3 id="cookies">クッキーを使用していますか？</h3>
+      <h3 id="cookies">クッキーを使用していますか?</h3>
 
       <p>はい。クッキーはあなたがウェブブラウザ上で許可した場合にコンピュータのストレージに転送される小さなファイルです。これらのクッキーを使用すると、サイトでブラウザが識別され、登録済みのアカウントを持っている場合は登録済みのアカウントに関連付けがされます。</p>
 
       <p>クッキーを使用して、今後再度閲覧された場合に前回のデータから設定を呼び出したり、今後の改善のためにサイトのトラフィックやサイトの相互作用に関する集計データを作成します。このサービスは、サイトを訪れた方との理解を深めるために、第三者のサービス提供者と契約することがあります。これらのサービス提供者というものは、このサービスでの業務を行ったり、改善するためにこのサービスの代わって収集された情報を使用することはできません。</p>
 
-      <h3 id="disclose">このサイトは外部に何らかの情報を開示していますか？</h3>
+      <h3 id="disclose">このサイトは外部に何らかの情報を開示していますか?</h3>
 
       <p>私たちは、個人を特定出来る情報を外部へ販売、取引、または他の方法で渡すことはありません。これには、このサイトを操作したり、業務を行ったり、サービスを提供するのに役立つ信頼できる第三者は含まれません。法令遵守、サイトポリシーの施行、このサービスや他の人の権利、財産または安全の保護のために適切であると判断した場合に、あなたの情報を公開する場合があります。ただし、マーケティングや広告、その他の目的で匿名での訪問者情報を他者へ提供することができます。</p>
 

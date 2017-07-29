@@ -4,7 +4,6 @@ import { injectIntl } from 'react-intl';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
 
-//import ReactSwipeableViews from 'react-swipeable-views';
 import { links, getIndex, getLink } from './tabs_bar';
 
 import BundleContainer from '../containers/bundle_container';
@@ -52,17 +51,6 @@ export default class ColumnsArea extends ImmutablePureComponent {
   componentDidUpdate() {
     this.lastIndex = getIndex(this.context.router.history.location.pathname);
     this.setState({ shouldAnimate: true });
-  }
-
-  handleSwipe = (index) => {
-    this.pendingIndex = index;
-  }
-
-  handleAnimationEnd = () => {
-    if (typeof this.pendingIndex === 'number') {
-      this.context.router.history.push(getLink(this.pendingIndex));
-      this.pendingIndex = null;
-    }
   }
 
   renderView = (link, index) => {

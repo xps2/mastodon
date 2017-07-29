@@ -1,5 +1,4 @@
 import loadPolyfills from '../mastodon/load_polyfills';
-
 import localQuote from '../mastodon/quote';
 
 function main() {
