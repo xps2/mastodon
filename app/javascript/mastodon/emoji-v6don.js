@@ -105,7 +105,26 @@ byre.pre.push({
   }
 });
 
-const apply_without_tag = (str, f) => str.replace(/([^<]*)(<[^>]*>)?/mg, (all, raw, tag) => f(raw) + (tag || ''));
+const apply_without_tag = (str, f) => {
+  let rtn = '';
+  while (str) {
+    let tagbegin = str.indexOf('<');
+    if (tagbegin == -1) {
+      rtn += f(str);
+      break;
+    }
+    rtn += f(str.slice(0, tagbegin));
+    str = str.slice(tagbegin);
+    let tagend = str.indexOf('>') + 1;
+    if (!tagend) {
+      rtn += str;
+      break;
+    }
+    rtn += str.slice(0, tagend);
+    str = str.slice(tagend);
+  }
+  return rtn;
+}
 
 localEmoji.pre.push(...byre.pre.map(e => e.tag ?
   str => str.replace(e.re, e.fmt) :
@@ -115,39 +134,48 @@ localEmoji.post.push(...byre.post.map(e => e.tag ?
   str => apply_without_tag(str, s => s.replace(e.re, e.fmt))));
 
 const shorttab = {};
-[
-    "nicoru", "iine", "irane", "mayo",
-].forEach(name => {
+
+["nicoru", "iine", "irane", "mayo",].forEach(name => {
   shorttab[name] = {
-    remtest: rem => /^\d+$/.test(rem),
+    remtest: (_, rem) => /^\d+$/.test(rem),
     append: (_, rem) => rem ? `style="transform: rotate(${rem}deg)"` : '',
   };
 });
+["rmn_e", "tree", "tama"].forEach(name => {
+  shorttab[name] = {};
+})
 shorttab.realtek = {path: () => "/emoji/proprietary/realtek.svg", append: () => `style="width: 4.92em"`};
 
-const le_curry = (trie, replacer) => function le_rec(cur, prev = '') {
-  let idx = cur.indexOf(':');
-  if (idx == -1) return prev + cur;
-  prev += cur.slice(0, idx);
-  cur = cur.slice(idx + 1);
-  idx = cur.indexOf(':');
-  if (idx == -1) return prev + ':' + cur;
-  let tag = cur.slice(0, idx);
-  cur = cur.slice(idx);
-  let match = trie.search(tag);
-  if (!match) return le_rec(cur, prev + ':' + tag);
-  let rem;
-  if (tag == match) {
-    rem = null;
+const le_curry = (trie, replacer) => (cur) => {
+  let prev = '';
+  for (;;) {
+    let tagbegin = cur.indexOf(':') + 1;
+    if (!tagbegin) break;
+    let tagend = cur.slice(tagbegin).indexOf(':');
+    if (tagend == -1) break;
+    tagend += tagbegin;
+    let tag = cur.slice(tagbegin, tagend);
+    let match = trie.search(tag);
+    let replace = false, rem = null;
+    if (match) {
+      if (tag == match) {
+        replace = true;
+      }
+      else {
+        rem = tag.slice(match.length);
+        replace = shorttab[match].remtest && shorttab[match].remtest(match, rem);
+      }
+    }
+    if (replace) {
+      prev += cur.slice(0, tagbegin - 1) + replacer(match, rem);
+      cur = cur.slice(tagend + 1);
+    }
+    else {
+      prev += cur.slice(0, tagend);
+      cur = cur.slice(tagend);
+    }
   }
-  else if (shorttab[match].remtest) {
-    rem = tag.slice(match.length);
-    if (!shorttab[match].remtest(rem)) return le_rec(cur, prev + ':' + tag);
-  }
-  else {
-    return le_rec(cur, prev + ':' + tag);
-  }
-  return le_rec(cur.slice(1), prev + replacer(match, rem));
+  return prev + cur;
 };
 
 localEmoji.post.push(str => apply_without_tag(str, raw =>
