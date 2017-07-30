@@ -1,6 +1,8 @@
 import Trie from 'substring-trie';
 import emojify from './emoji';
 
+// ↓の配列に絵文字置換対象の文字列を受け取って置換を施した文字列を返すという
+// 関数を追加していく
 const localEmoji = {
   pre: [], post: []
 };
@@ -8,6 +10,7 @@ export default function(order, text) {
   return localEmoji[order].reduce((t, e) => e(t), text);
 };
 
+// ユーティリティ
 const hesc = raw => {
   let ent = false;
   return raw.replace(/./ug, c => {
@@ -24,6 +27,57 @@ const hesc = raw => {
   })
 };
 
+const apply_without_tag = (str, f) => {
+  let rtn = '';
+  while (str) {
+    let tagbegin = str.indexOf('<');
+    if (tagbegin == -1) {
+      rtn += f(str);
+      break;
+    }
+    rtn += f(str.slice(0, tagbegin));
+    str = str.slice(tagbegin);
+    let tagend = str.indexOf('>') + 1;
+    if (!tagend) {
+      rtn += str;
+      break;
+    }
+    rtn += str.slice(0, tagend);
+    str = str.slice(tagend);
+  }
+  return rtn;
+}
+
+// ここから関数登録
+
+// ^H^H
+localEmoji.pre.push(str => apply_without_tag(str, s => {
+  let rtn = ''
+  while (s) {
+    let rr = /(\^H)+/i.exec(s);
+    if (!rr) break;
+    let delend = rr.index;
+    if (!delend) {
+      rtn += rr[0];
+      s = s.slice(rr[0].length);
+      continue;
+    }
+    let dellen = rr[0].length / 2;
+    let delstart = delend;
+    while (delstart > 0 && dellen--) {
+      if (/[\udc00-\udfff]/.test(s[--delstart])) delstart--;
+    }
+    if (delstart < 0) delstart = 0;
+    rtn += `${s.slice(0, delstart)}<del>${hesc(s.slice(delstart, delend))}</del><span class="invisible">${rr[0]}</span>`
+    s = s.slice(delend + rr[0].length);
+  }
+  return rtn + s;
+}));
+
+// 絵文字化させたくないやつ
+localEmoji.pre.push(str => apply_without_tag(str, s => s.replace(/[®©™■-◿〽]/ug, c => hesc(c))));
+
+// 置換をString.replace()に投げるやつ
 const byre = {
   pre: [],
   post: [
@@ -111,57 +165,13 @@ byre.pre.push({
   }
 });
 
-const apply_without_tag = (str, f) => {
-  let rtn = '';
-  while (str) {
-    let tagbegin = str.indexOf('<');
-    if (tagbegin == -1) {
-      rtn += f(str);
-      break;
-    }
-    rtn += f(str.slice(0, tagbegin));
-    str = str.slice(tagbegin);
-    let tagend = str.indexOf('>') + 1;
-    if (!tagend) {
-      rtn += str;
-      break;
-    }
-    rtn += str.slice(0, tagend);
-    str = str.slice(tagend);
-  }
-  return rtn;
-}
+["pre", "post"].forEach(order => {
+  localEmoji[order].push(...byre[order].map(e => e.tag ?
+    str => str.replace(e.re, e.fmt) :
+    str => apply_without_tag(str, s => s.replace(e.re, e.fmt))));
+})
 
-localEmoji.pre.push((str) => apply_without_tag(str, s => {
-  let rtn = ''
-  while (s) {
-    let rr = /(\^H)+/i.exec(s);
-    if (!rr) break;
-    let delend = rr.index;
-    if (!delend) {
-      rtn += rr[0];
-      s = s.slice(rr[0].length);
-      continue;
-    }
-    let dellen = rr[0].length / 2;
-    let delstart = delend;
-    while (delstart > 0 && dellen--) {
-      if (/[\udc00-\udfff]/.test(s[--delstart])) delstart--;
-    }
-    if (delstart < 0) delstart = 0;
-    rtn += `${s.slice(0, delstart)}<del>${hesc(s.slice(delstart, delend))}</del><span class="invisible">${rr[0]}</span>`
-    s = s.slice(delend + rr[0].length);
-  }
-  return rtn + s;
-}));
-
-localEmoji.pre.push(...byre.pre.map(e => e.tag ?
-  str => str.replace(e.re, e.fmt) :
-  str => apply_without_tag(str, s => s.replace(e.re, e.fmt))));
-localEmoji.post.push(...byre.post.map(e => e.tag ?
-  str => str.replace(e.re, e.fmt) :
-  str => apply_without_tag(str, s => s.replace(e.re, e.fmt))));
-
+// :tag:の置換
 const shorttab = {};
 
 [
