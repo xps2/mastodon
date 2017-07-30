@@ -1,3 +1,5 @@
+@import 'application';
+
 @keyframes v6don-kira {
   0% {
     transform: scale(1);
@@ -57,17 +59,45 @@
   color: white;
 }
 
-.status__content blockquote {
-  color: #0e7f28;
-  border-right: solid 3px #0e7f28;
-  padding-right: 2px;
+/* 単色SVGの色変えを頑張ろうとした跡
+.v6don-fill-by-stroke {
+  stroke: $primary-text-color;
+}
+.v6don-fill-by-round {
+  fill: $primary-text-color;
+}
+
+.activity-stream {
+  .v6don-fill-by-stroke {
+    stroke: $ui-base-color;
+  }
+  .v6don-fill-by-round {
+    fill: $ui-base-color;
+  }
+}
+*/
+
+$quoted-text-color: #0e7f28;
+
+.status__content {
+  blockquote {
+    color: $quoted-text-color;
+    border-right: solid 3px $quoted-text-color;
+    padding-right: 2px;
+    
+/*
+    .v6don-fill-by-stroke {
+      stroke: $quoted-text-color;
+    }
+    .v6don-fill-by-round {
+      fill: $quoted-text-color;
+    }
+*/
+  }
+  p + blockquote {
+    margin-top: -20px;
+  }
 }
 
 .e-content blockquote {
 }
-
-.status__content p + blockquote {
-  margin-top: -20px;
-}
-
-@import 'application';

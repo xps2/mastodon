@@ -76,9 +76,15 @@ byre.pre.push({
         decolen = rr[0].length;
       }
       else if (ip[0] == "<") {
-        deco = /^<img\s/i.test(ip);
-        rr = /<[^>]*?>/.exec(ip);
-        decolen = rr[0].length;
+        if (/^<svg /.test(ip)) {
+          deco = true;
+          decolen = ip.indexOf('</svg>') + '</svg>'.length;
+        }
+        else {
+          deco = /^<img\s/i.test(ip);
+          rr = /<[^>]*?>/.exec(ip);
+          decolen = rr[0].length;
+        }
       }
       else if (ip.codePointAt(0) >= 65536) {
         decolen = 2;
@@ -126,6 +132,29 @@ const apply_without_tag = (str, f) => {
   return rtn;
 }
 
+localEmoji.pre.push((str) => apply_without_tag(str, s => {
+  let rtn = ''
+  while (s) {
+    let rr = /(\^H)+/i.exec(s);
+    if (!rr) break;
+    let delend = rr.index;
+    if (!delend) {
+      rtn += rr[0];
+      s = s.slice(rr[0].length);
+      continue;
+    }
+    let dellen = rr[0].length / 2;
+    let delstart = delend;
+    while (delstart > 0 && dellen--) {
+      if (/[\udc00-\udfff]/.test(s[--delstart])) delstart--;
+    }
+    if (delstart < 0) delstart = 0;
+    rtn += `${s.slice(0, delstart)}<del>${hesc(s.slice(delstart, delend))}</del><span class="invisible">${rr[0]}</span>`
+    s = s.slice(delend + rr[0].length);
+  }
+  return rtn + s;
+}));
+
 localEmoji.pre.push(...byre.pre.map(e => e.tag ?
   str => str.replace(e.re, e.fmt) :
   str => apply_without_tag(str, s => s.replace(e.re, e.fmt))));
@@ -135,18 +164,23 @@ localEmoji.post.push(...byre.post.map(e => e.tag ?
 
 const shorttab = {};
 
-["nicoru", "iine", "irane", "mayo",].forEach(name => {
+[
+  "nicoru", "iine", "irane", "mayo",
+].forEach(name => {
   shorttab[name] = {
-    remtest: (_, rem) => /^\d+$/.test(rem),
+    remtest: (rem) => /^\d+$/.test(rem),
     append: (_, rem) => rem ? `style="transform: rotate(${rem}deg)"` : '',
   };
 });
-["rmn_e", "tree", "tama"].forEach(name => {
+[
+  "rmn_e", "tree", "tama",
+  "hohoemi",
+].forEach(name => {
   shorttab[name] = {};
 })
 shorttab.realtek = {path: () => "/emoji/proprietary/realtek.svg", append: () => `style="width: 4.92em"`};
 
-const le_curry = (trie, replacer) => (cur) => {
+const le_curry = (trie, remtest, replacer) => (cur) => {
   let prev = '';
   for (;;) {
     let tagbegin = cur.indexOf(':') + 1;
@@ -163,7 +197,7 @@ const le_curry = (trie, replacer) => (cur) => {
       }
       else {
         rem = tag.slice(match.length);
-        replace = shorttab[match].remtest && shorttab[match].remtest(match, rem);
+        replace = remtest && remtest(match, rem);
       }
     }
     if (replace) {
@@ -179,13 +213,27 @@ const le_curry = (trie, replacer) => (cur) => {
 };
 
 localEmoji.post.push(str => apply_without_tag(str, raw =>
-  le_curry(new Trie(Object.keys(shorttab)), (match, rem) => {
-    let name = match + (rem || '');
-    let rtn = `<img class="emojione" alt=":${name}:" title=":${name}:" src="`
-    rtn += (shorttab[match].path ? shorttab[match].path(match, rem) : `/emoji/v6don/${match}.svg`) + '"';
-    if (shorttab[match].append) {
-      rtn += ' ' + (shorttab[match].append(match, rem) || '');
+  le_curry(
+    new Trie(Object.keys(shorttab)),
+    (match, rem) => shorttab[match].remtest && shorttab[match].remtest(rem),
+    (match, rem) => {
+      let name = match + (rem || '');
+      let rtn = `<img class="emojione" alt=":${name}:" title=":${name}:" src="`
+      rtn += (shorttab[match].path ? shorttab[match].path(match, rem) : `/emoji/v6don/${match}.svg`) + '"';
+      if (shorttab[match].append) {
+        rtn += ' ' + (shorttab[match].append(match, rem) || '');
+      }
+      rtn += "/>";
+      return rtn;
     }
-    rtn += "/>";
-    return rtn;
-  })(raw)));
+  )(raw)));
+
+/* 単色SVGの色変えを頑張ろうとした跡(chromeで動かん)
+const monoemoji = ["hohoemi"];
+localEmoji.post.push(str => apply_without_tag(str, raw =>
+  le_curry(
+    new Trie(monoemoji),
+    null,
+    (name) => `<svg class="emojione"><title>:${hesc(name)}:</title><desc>:${hesc(name)}:</desc><use xlink:href="/emoji/v6don/${name}.svg#content"/></svg>`
+  )(raw)));
+*/
