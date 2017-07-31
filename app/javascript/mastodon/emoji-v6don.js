@@ -27,6 +27,17 @@ const hesc = raw => {
   })
 };
 
+const unesc = str => {
+  if (str.indexOf('<') != -1) {
+    throw new Error("can't unescape string containing tags");
+  }
+  let elem = document.createElement("div");
+  elem.innerHTML = str;
+  return elem.textContent;
+}
+
+const ununesc = str => str.replace(/[&<>]/g, e => ({"&": "&amp;", "<": "&lt;", ">": "&gt;"})[e]);
+
 const apply_without_tag = (str, f) => {
   let rtn = '';
   while (str) {
@@ -52,6 +63,7 @@ const apply_without_tag = (str, f) => {
 // ^H^H
 localEmoji.pre.push(str => apply_without_tag(str, s => {
   let rtn = ''
+  s = unesc(s);
   while (s) {
     let rr = /(\^H)+/i.exec(s);
     if (!rr) break;
@@ -67,10 +79,11 @@ localEmoji.pre.push(str => apply_without_tag(str, s => {
       if (/[\udc00-\udfff]/.test(s[--delstart])) delstart--;
     }
     if (delstart < 0) delstart = 0;
-    rtn += `${s.slice(0, delstart)}<del>${hesc(s.slice(delstart, delend))}</del><span class="invisible">${rr[0]}</span>`
+
+    rtn += `${ununesc(s.slice(0, delstart))}<del>${hesc(ununesc(s.slice(delstart, delend)))}</del><span class="invisible">${rr[0]}</span>`
     s = s.slice(delend + rr[0].length);
   }
-  return rtn + s;
+  return rtn + ununesc(s);
 }));
 
 // 絵文字化させたくないやつ
