@@ -4,11 +4,11 @@ import monosvg from '../images/v6don-monosvg';
 
 // ↓の配列に絵文字置換対象の文字列を受け取って置換を施した文字列を返すという
 // 関数を追加していく
-const localEmoji = {
+const highlighter = {
   pre: [], post: []
 };
 export default function(order, text) {
-  return localEmoji[order].reduce((t, e) => e(t), text);
+  return highlighter[order].reduce((t, e) => e(t), text);
 };
 
 // ユーティリティ
@@ -62,7 +62,7 @@ const apply_without_tag = (str, f) => {
 // ここから関数登録
 
 // ^H^H
-localEmoji.pre.push(str => apply_without_tag(str, s => {
+highlighter.pre.push(str => apply_without_tag(str, s => {
   let rtn = ''
   s = unesc(s);
   while (s) {
@@ -88,7 +88,7 @@ localEmoji.pre.push(str => apply_without_tag(str, s => {
 }));
 
 // 絵文字化させたくないやつ
-localEmoji.pre.push(str => apply_without_tag(str, s => s.replace(/[®©™■-◿〽]/ug, c => hesc(c))));
+highlighter.pre.push(str => apply_without_tag(str, s => s.replace(/[®©™■-◿〽]/ug, c => hesc(c))));
 
 // 置換をString.replace()に投げるやつ
 const byre = {
@@ -180,7 +180,7 @@ byre.pre.push({
 });
 
 ["pre", "post"].forEach(order => {
-  localEmoji[order].push(...byre[order].map(e => e.tag ?
+  highlighter[order].push(...byre[order].map(e => e.tag ?
     str => str.replace(e.re, e.fmt) :
     str => apply_without_tag(str, s => s.replace(e.re, e.fmt))));
 })
@@ -234,7 +234,7 @@ const le_curry = (trie, remtest, replacer) => (cur) => {
   return prev + cur;
 };
 
-localEmoji.post.push(str => apply_without_tag(str, raw =>
+highlighter.post.push(str => apply_without_tag(str, raw =>
   le_curry(
     new Trie(Object.keys(shorttab)),
     (match, rem) => shorttab[match].remtest && shorttab[match].remtest(rem),
@@ -250,7 +250,7 @@ localEmoji.post.push(str => apply_without_tag(str, raw =>
     }
   )(raw)));
 
-localEmoji.post.push(str => apply_without_tag(str, raw =>
+highlighter.post.push(str => apply_without_tag(str, raw =>
   le_curry(
     new Trie(Object.keys(monosvg)),
     null,

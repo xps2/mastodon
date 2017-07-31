@@ -1,6 +1,6 @@
 import { unicodeMapping } from './emojione_light';
 import Trie from 'substring-trie';
-import toV6donEmoji from './emoji-v6don';
+import highlight from './v6don-highlighter';
 
 const trie = new Trie(Object.keys(unicodeMapping));
 
@@ -29,6 +29,6 @@ const emojify = str => {
 }
 
 const emojify_v6don = text =>
-  toV6donEmoji("post", emojify(toV6donEmoji("pre", text)));
+  highlight("post", emojify(highlight("pre", text)));
   
 export default emojify_v6don;
