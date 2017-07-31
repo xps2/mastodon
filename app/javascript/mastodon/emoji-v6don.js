@@ -1,5 +1,6 @@
 import Trie from 'substring-trie';
 import emojify from './emoji';
+import monosvg from '../images/v6don-monosvg';
 
 // ↓の配列に絵文字置換対象の文字列を受け取って置換を施した文字列を返すという
 // 関数を追加していく
@@ -197,7 +198,6 @@ const shorttab = {};
 });
 [
   "rmn_e", "tree", "tama",
-  "hohoemi",
 ].forEach(name => {
   shorttab[name] = {};
 })
@@ -250,12 +250,9 @@ localEmoji.post.push(str => apply_without_tag(str, raw =>
     }
   )(raw)));
 
-/* 単色SVGの色変えを頑張ろうとした跡(chromeで動かん)
-const monoemoji = ["hohoemi"];
 localEmoji.post.push(str => apply_without_tag(str, raw =>
   le_curry(
-    new Trie(monoemoji),
+    new Trie(Object.keys(monosvg)),
     null,
-    (name) => `<svg class="emojione"><title>:${hesc(name)}:</title><desc>:${hesc(name)}:</desc><use xlink:href="/emoji/v6don/${name}.svg#content"/></svg>`
+    (name) => monosvg[name]
   )(raw)));
-*/

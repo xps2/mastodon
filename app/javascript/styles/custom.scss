@@ -59,23 +59,33 @@
   color: white;
 }
 
-/* 単色SVGの色変えを頑張ろうとした跡
-.v6don-fill-by-stroke {
+.v6don-monosvg {
+  fill: none;
+}
+.v6don-fg-stroke {
   stroke: $primary-text-color;
 }
-.v6don-fill-by-round {
+.v6don-fg-round {
   fill: $primary-text-color;
 }
 
 .activity-stream {
-  .v6don-fill-by-stroke {
+  .v6don-fg-stroke {
     stroke: $ui-base-color;
   }
-  .v6don-fill-by-round {
+  .v6don-fg-round {
     fill: $ui-base-color;
   }
 }
-*/
+
+.muted {
+  .v6don-fg-stroke {
+    stroke: $ui-base-lighter-color;
+  }
+  .v6don-fg-round {
+    fill: $ui-base-lighter-color;
+  }
+}
 
 $quoted-text-color: #0e7f28;
 
@@ -85,14 +95,12 @@ $quoted-text-color: #0e7f28;
     border-right: solid 3px $quoted-text-color;
     padding-right: 2px;
     
-/*
-    .v6don-fill-by-stroke {
+    .v6don-fg-stroke {
       stroke: $quoted-text-color;
     }
-    .v6don-fill-by-round {
+    .v6don-fg-round {
       fill: $quoted-text-color;
     }
-*/
   }
   p + blockquote {
     margin-top: -20px;
