@@ -14,8 +14,8 @@ const emojify = str => {
     if (i == str.length)
       break;
     else if (c == '<' || c == '&') {
-      let tagend = i + str.slice(i).indexOf(">;"["<&".indexOf(c)]) + 1;
-      if (tagend == i)
+      let tagend = str.indexOf(">;"["<&".indexOf(c)], i + 1) + 1;
+      if (!tagend)
         break;
       rtn += str.slice(0, tagend);
       str = str.slice(tagend);

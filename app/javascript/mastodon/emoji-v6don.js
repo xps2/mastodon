@@ -36,13 +36,12 @@ const apply_without_tag = (str, f) => {
       break;
     }
     rtn += f(str.slice(0, tagbegin));
-    str = str.slice(tagbegin);
-    let tagend = str.indexOf('>') + 1;
+    let tagend = str.indexOf('>', tagbegin + 1) + 1;
     if (!tagend) {
-      rtn += str;
+      rtn += str.slice(tagbegin);
       break;
     }
-    rtn += str.slice(0, tagend);
+    rtn += str.slice(tagbegin, tagend);
     str = str.slice(tagend);
   }
   return rtn;
@@ -132,6 +131,7 @@ byre.pre.push({
       else if (ip[0] == "<") {
         if (/^<svg /.test(ip)) {
           deco = true;
+          // BUG: SVGが入れ子になってると死ぬ
           decolen = ip.indexOf('</svg>') + '</svg>'.length;
         }
         else {
@@ -195,9 +195,8 @@ const le_curry = (trie, remtest, replacer) => (cur) => {
   for (;;) {
     let tagbegin = cur.indexOf(':') + 1;
     if (!tagbegin) break;
-    let tagend = cur.slice(tagbegin).indexOf(':');
+    let tagend = cur.indexOf(':', tagbegin);
     if (tagend == -1) break;
-    tagend += tagbegin;
     let tag = cur.slice(tagbegin, tagend);
     let match = trie.search(tag);
     let replace = false, rem = null;
