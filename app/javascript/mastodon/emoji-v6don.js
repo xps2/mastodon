@@ -197,7 +197,7 @@ const shorttab = {};
   };
 });
 [
-  "rmn_e", "tree", "tama",
+  "rmn_e",
 ].forEach(name => {
   shorttab[name] = {};
 })

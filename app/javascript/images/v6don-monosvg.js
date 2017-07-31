@@ -19,6 +19,66 @@ M 300,205.12891 c -7.77468,-2.2195 -16.25989,-5.46409 -28.7399,-10.98959 -5.0819
 />
 </svg>`; 
 
+template.hiki = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<g class="v6don-fg-stroke" stroke-width="6">
+  <circle cx="32" cy="32" r="29"/>
+  <g>
+    <line x1="12" y1="16" x2="52" y2="16" />
+    <line x1="32" y1="16" x2="32" y2="47" />
+    <line x1="32" y1="32" x2="46" y2="32" />
+    <line x1="15" y1="32" x2="15" y2="54" />
+    <line x1="15" y1="44" x2="50" y2="50" />
+    <animateTransform attributeType="xml" attributeName="transform"
+      type="rotate" from="0 32 32" to="360 32 32" dur="3s" repeatCount="indefinite" />
+  </g>
+</g>
+</svg>`;
+
+template.ken = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<g class="v6don-fg-stroke" stroke-width="6">
+  <circle cx="32" cy="32" r="29" />
+  <g>
+    <line x1="10" y1="20" x2="30" y2="20" />
+    <line x1="20" y1="20" x2="10" y2="40" />
+    <path d="M15,34 l12,0 l0,15 l-12,0 z" stroke="none" class="v6don-fg-round"/>
+    <line x1="32" y1="16" x2="52" y2="16" />
+    <line x1="30" y1="30" x2="56" y2="30" />
+    <line x1="38" y1="16" x2="38" y2="54" />
+    <line x1="48" y1="16" x2="48" y2="54" />
+    <animateTransform attributeType="xml" attributeName="transform"
+      type="rotate" from="0 32 32" to="360 32 32" dur="3s" repeatCount="indefinite" />
+  </g>
+</g>
+</svg>`;
+
+template.tama = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<g class="v6don-fg-stroke" stroke-width="6">
+  <circle cx="32" cy="32" r="29"/>
+  <g>
+    <line x1="14" y1="14" x2="50" y2="14" />
+    <line x1="32" y1="16" x2="32" y2="52" />
+    <line x1="14" y1="32" x2="50" y2="32" />
+    <line x1="14" y1="50" x2="50" y2="50" />
+    <line x1="38" y1="41" x2="50" y2="41" />
+    <animateTransform attributeType="xml" attributeName="transform"
+      type="rotate" from="0 32 32" to="360 32 32" dur="3s" repeatCount="indefinite" />
+  </g>
+</g>
+</svg>`;
+
+template.tree = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<g class="v6don-fg-stroke" stroke-width="6">
+  <circle cx="32" cy="32" r="29"/>
+  <g>
+    <line x1="8" y1="24" x2="56" y2="24" />
+    <line x1="32" y1="6" x2="32" y2="58" />
+    <line x1="32" y1="24" x2="12" y2="48" />
+    <line x1="32" y1="24" x2="52" y2="48" />
+    <animateTransform attributeType="xml" attributeName="transform"
+      type="rotate" from="0 32 32" to="360 32 32" dur="3s" repeatCount="indefinite" />
+  </g>
+</g>
+</svg>`;
 
 Object.keys(template).forEach(k => {
   let n = k.replace(/./ug, c => `&#${c.codePointAt(0)};`);
