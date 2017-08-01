@@ -188,7 +188,7 @@ const replace_by_re = (re, fmt) => str => {
       str = str.slice(idx);
     }
     else {
-      rtn += replacement;
+      rtn += str.slice(0, rr.index) + replacement;
       str = str.slice(rr.index + rr[0].length);
     }
   }
@@ -287,12 +287,14 @@ trlist.rec.push(shortname_match(Object.keys(monosvg), null, (name) => {
           // 仮置きしたspanをDOMで置換
           let dp = new DOMParser();
           let svg = dp.parseFromString(monosvg[name], "application/xml").documentElement;
-          // 不安なのでちょっと待つ
-          setTimeout(() => {
+          let replace = () => {
             [].forEach.call(document.body.getElementsByClassName(`monosvg-replacee-${name}`) || [], e => {
               e.parentNode.replaceChild(svg.cloneNode(true), e);
-            });
-          }, 300);
+            })
+          };
+          replace();
+          // 不安なのでもう1回する(謎)
+          setTimeout(replace, 1500);
         });
       }
       else {
