@@ -87,17 +87,17 @@ trlist.push(apply_without_tag(s => {
 const byre = [];
 
 byre.push({
-  re: /(‡+|†+)([^†‡]{1,30}?)(‡+|†+)/g,
-  fmt: (m, d1, txt, d2) => {
-    if (d1[0] != d2[0]) return m;
+  re: /((‡+|†+)([^†‡]{1,30}?))(‡+|†+)/,
+  fmt: (m, skip, d1, txt, d2) => {
+    if (d1[0] != d2[0]) return null;
     return `<span class="v6don-tyu2"><span class="v6don-dagger">${d1}</span>${txt}<span class="v6don-dagger">${d2}</span></span>`;
   },
 });
 
 byre.push({
-  re: /(✨+)( ?IPv6[^✨]*)(✨+)/ug,
-  fmt: (m, s1, ip, s2) => {
-    let f = k => k.replace(/✨/g, s => `<span class="v6don-kira">${s}</span>`);
+  re: /((✨+)( ?IPv6[^✨]*))(✨+)/u,
+  fmt: (m, skip, s1, ip, s2) => {
+    let f = k => k.replace(/./ug, s => `<span class="v6don-kira">✨</span>`);
     
     let ipdeco = ""
     ip = highlight(ip);
@@ -142,7 +142,7 @@ byre.push({
     }
     
     if (ip.length) {
-      return m;
+      return null;
     }
     
     return `${f(s1)}${ipdeco}${f(s2)}`;
@@ -164,9 +164,27 @@ byre.push(...[
   {re: /:don:/g, fmt: `<a href="https://mstdn.maud.io/">:don:</a>`},
 ]);
 
-trlist.push(...byre.map(e => e.tag ?
-  str => str.replace(e.re, e.fmt) :
-  apply_without_tag(s => s.replace(e.re, e.fmt))));
+const replace_by_re = (re, fmt) => str => {
+  if (re.global) return str.replace(re, fmt);
+  
+  let rr;
+  let rtn = '';
+  while (str && (rr = re.exec(str))) {
+    let replacement = fmt(...rr);
+    if (replacement === null) {
+      let idx = rr.index + rr[1].length;
+      rtn += str.slice(0, idx);
+      str = str.slice(idx);
+    }
+    else {
+      rtn += replacement;
+      str = str.slice(rr.index + rr[0].length);
+    }
+  }
+  return rtn + str;
+}
+
+trlist.push(...byre.map(e => e.tag ? replace_by_re(e.re, e.fmt) : apply_without_tag(replace_by_re(e.re, e.fmt))));
 
 // :tag:の置換
 const shorttab = {};
