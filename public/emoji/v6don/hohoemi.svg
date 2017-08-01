@@ -1,7 +1,4 @@
-const template = {};
-export default template;
-
-template.hohoemi = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 760">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 760">
 <path
 class="v6don-fg-round"
 d="
@@ -16,72 +13,4 @@ M 275.5,267.93188 c -15.01126,-4.71774 -38.34175,-5.09877 -57,-0.93092 -12.66172
 m 267,-1.62631 c -4.83379,-0.98364 -16.41254,-2.39315 -36.64729,-2.4419 -15.58621,-0.0376 -27.57995,2.31931 -29.31607,1.04509 -1.42741,-1.42741 0.99436,-7.55582 5.6146,-12.05608 3.47541,-3.38515 8.5445,-6.62721 16.20322,-10.36318 27.76094,-13.54193 50.20794,-13.94773 66.52662,-1.20266 C 571.42261,246.39585 577,254.0594 577,257.9387 c 0,8.3349 -15.8124,12.16969 -34.5,8.36687 z
 M 300,205.12891 c -7.77468,-2.2195 -16.25989,-5.46409 -28.7399,-10.98959 -5.08194,-2.25002 -12.19737,-4.77683 -15.81205,-5.61514 -14.12322,-3.27539 -40.0118,-0.93235 -55.41146,5.01501 C 195.10793,195.44263 189.4987,197 187.57163,197 c -8.77792,0 -14.86555,-6.73792 -12.67958,-14.03404 1.84957,-6.17329 11.33685,-13.50997 23.10795,-17.86978 6.99322,-2.59016 26.38958,-6.75835 35.5,-7.62879 12.37305,-1.18216 28.305,1.05555 43.5,6.10976 19.86013,6.60595 30.49046,12.07331 37.92012,19.50297 7.46237,7.46237 9.4694,11.03001 8.65307,15.38143 -1.46126,7.78921 -10.59465,10.37246 -23.57319,6.66736 z"
 />
-</svg>`; 
-
-template.hiki = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-<g class="v6don-fg-stroke" stroke-width="6">
-  <circle cx="32" cy="32" r="29"/>
-  <g>
-    <line x1="12" y1="16" x2="52" y2="16" />
-    <line x1="32" y1="16" x2="32" y2="47" />
-    <line x1="32" y1="32" x2="46" y2="32" />
-    <line x1="15" y1="32" x2="15" y2="54" />
-    <line x1="15" y1="44" x2="50" y2="50" />
-    <animateTransform attributeType="xml" attributeName="transform"
-      type="rotate" from="0 32 32" to="360 32 32" dur="3s" repeatCount="indefinite" />
-  </g>
-</g>
-</svg>`;
-
-template.ken = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-<g class="v6don-fg-stroke" stroke-width="6">
-  <circle cx="32" cy="32" r="29" />
-  <g>
-    <line x1="10" y1="20" x2="30" y2="20" />
-    <line x1="20" y1="20" x2="10" y2="40" />
-    <path d="M15,34 l12,0 l0,15 l-12,0 z" />
-    <line x1="32" y1="16" x2="52" y2="16" />
-    <line x1="30" y1="30" x2="56" y2="30" />
-    <line x1="38" y1="16" x2="38" y2="54" />
-    <line x1="48" y1="16" x2="48" y2="54" />
-    <animateTransform attributeType="xml" attributeName="transform"
-      type="rotate" from="0 32 32" to="360 32 32" dur="3s" repeatCount="indefinite" />
-  </g>
-</g>
-</svg>`;
-
-template.tama = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-<g class="v6don-fg-stroke" stroke-width="6">
-  <circle cx="32" cy="32" r="29"/>
-  <g>
-    <line x1="14" y1="14" x2="50" y2="14" />
-    <line x1="32" y1="16" x2="32" y2="52" />
-    <line x1="14" y1="32" x2="50" y2="32" />
-    <line x1="14" y1="50" x2="50" y2="50" />
-    <line x1="38" y1="41" x2="50" y2="41" />
-    <animateTransform attributeType="xml" attributeName="transform"
-      type="rotate" from="0 32 32" to="360 32 32" dur="3s" repeatCount="indefinite" />
-  </g>
-</g>
-</svg>`;
-
-template.tree = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-<g class="v6don-fg-stroke" stroke-width="6">
-  <circle cx="32" cy="32" r="29"/>
-  <g>
-    <line x1="8" y1="24" x2="56" y2="24" />
-    <line x1="32" y1="6" x2="32" y2="58" />
-    <line x1="32" y1="24" x2="12" y2="48" />
-    <line x1="32" y1="24" x2="52" y2="48" />
-    <animateTransform attributeType="xml" attributeName="transform"
-      type="rotate" from="0 32 32" to="360 32 32" dur="3s" repeatCount="indefinite" />
-  </g>
-</g>
-</svg>`;
-
-Object.keys(template).forEach(k => {
-  let n = k.replace(/./ug, c => `&#${c.codePointAt(0)};`);
-  let s = template[k].replace(/\n/mg, ' ');
-  let i = s.indexOf('>') ;
-  template[k] = s.slice(0,i) + ` class="emojione v6don-monosvg"><title>:${n}:</title><description>:${n}:</description` + s.slice(i);
-});
+</svg>

@@ -1,5 +1,4 @@
 import Trie from 'substring-trie';
-import monosvg from '../images/v6don-monosvg';
 
 // ↓の配列に絵文字置換対象の文字列を受け取って置換を施した文字列を返すという
 // 関数を追加していく
@@ -97,7 +96,7 @@ byre.push({
 byre.push({
   re: /((✨+)( ?IPv6[^✨]*))(✨+)/u,
   fmt: (m, skip, s1, ip, s2) => {
-    let f = k => k.replace(/./ug, s => `<span class="v6don-kira">✨</span>`);
+    let f = k => k.replace(/./ug, `<span class="v6don-kira">✨</span>`);
     
     let ipdeco = ""
     ip = highlight(ip);
@@ -236,6 +235,7 @@ const shortname_match = (list, remtest, replacer) => apply_without_tag(cur => {
   return prev + cur;
 });
 
+// :tag: をフツーにimgで返すやつ
 trlist.push(shortname_match(
   Object.keys(shorttab),
   (match, rem) => shorttab[match].remtest && shorttab[match].remtest(rem),
@@ -250,7 +250,46 @@ trlist.push(shortname_match(
     return rtn;
   }));
 
-trlist.push(shortname_match(Object.keys(monosvg), null, (name) => monosvg[name]));
+// :tag: の単色SVG版
+const monosvg = {};
+["hiki", "hohoemi", "ken", "tama", "tree"].forEach(n => {monosvg[n] = null});
+
+trlist.push(shortname_match(Object.keys(monosvg), null, (name) => {
+  if (monosvg[name]) return monosvg[name];
+
+  if (monosvg[name] === null) {
+    // SVGを読みに行く
+    monosvg[name] = ''; // 空文字列で読み込み中を提示
+    // 取得処理
+    fetch(`/emoji/v6don/${name}.svg`).then(res => {
+      let escname = hesc(name);
+      if (res.ok) {
+        res.text().then(txt => {
+          // 読み込めた時
+          let s = txt.replace(/\n/mg, ' ');
+          let i = s.indexOf('>');
+          // 以後はこのSVGテキストをそのまま使う
+          monosvg[name] = s.slice(0,i) + ` class="emojione v6don-monosvg"><title>:${escname}:</title><description>:${escname}:</description` + s.slice(i);
+          // 仮置きしたspanをDOMで置換
+          let dp = new DOMParser();
+          let svg = dp.parseFromString(monosvg[name], "application/xml").documentElement;
+          // 不安なのでちょっと待つ
+          setTimeout(() => {
+            [].forEach.call(document.body.getElementsByClassName(`monosvg-replacee-${name}`) || [], e => {
+              e.parentNode.replaceChild(svg.cloneNode(true), e);
+            });
+          }, 25);
+        });
+      }
+      else {
+        // 読み込めなかった時は再取得を促す
+        monosvg[name] = null;
+      }
+    });
+  }
+  // SVG取得まで仮置き
+  return `<span class="monosvg-replacee-${name}">:${hesc(name)}:</span>`;
+}));
 
 // 絵文字化させたくないやつ
 trlist.push(apply_without_tag(s => s.replace(/[®©™■-◿〽]/ug, c => `&#${c.codePointAt(0)};`)));
