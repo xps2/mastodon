@@ -1,5 +1,4 @@
 import Trie from 'substring-trie';
-import emojify from './emoji';
 import monosvg from '../images/v6don-monosvg';
 
 // ↓の配列に絵文字置換対象の文字列を受け取って置換を施した文字列を返すという
@@ -85,20 +84,7 @@ trlist.push(apply_without_tag(s => {
 }));
 
 // 置換をString.replace()に投げるやつ
-const byre = [
-  {tag: true, re: /(<a\s[^>]*>)(.*?:don:.*?)<\/a>/mg, fmt: (all, tag, text) => tag + 
-    text.replace(/:don:/g, hesc(":don:")) + "</a>"
-  },
-  {re: /:don:/g, fmt: `<a href="https://mstdn.maud.io/">:don:</a>`},
-];
-
-byre.push(...[
-  {re: /5,?000\s?兆円/g, img: '5000tyoen.svg'},
-  {re: /5,?000兆/g, img: '5000tyo.svg'},
-].map(e => {
-    e.fmt = (m) => `<img alt="${hesc(m)}" src="/emoji/v6don/${e.img}"/>`;
-    return e;
-}));
+const byre = [];
 
 byre.push({
   re: /(‡+|†+)([^†‡]{1,30}?)(‡+|†+)/g,
@@ -163,6 +149,20 @@ byre.push({
   }
 });
 
+byre.push(...[
+  {re: /5,?000\s?兆円/g, img: '5000tyoen.svg'},
+  {re: /5,?000兆/g, img: '5000tyo.svg'},
+].map(e => {
+    e.fmt = (m) => `<img alt="${hesc(m)}" src="/emoji/v6don/${e.img}"/>`;
+    return e;
+}));
+
+byre.push(...[
+  {tag: true, re: /(<a\s[^>]*>)(.*?:don:.*?)<\/a>/mg, fmt: (all, tag, text) => tag + 
+    text.replace(/:don:/g, hesc(":don:")) + "</a>"
+  },
+  {re: /:don:/g, fmt: `<a href="https://mstdn.maud.io/">:don:</a>`},
+]);
 
 trlist.push(...byre.map(e => e.tag ?
   str => str.replace(e.re, e.fmt) :
@@ -186,8 +186,9 @@ const shorttab = {};
 })
 shorttab.realtek = {path: () => "/emoji/proprietary/realtek.svg", append: () => `style="width: 4.92em"`};
 
-const le_curry = (trie, remtest, replacer) => (cur) => {
+const shortname_match = (list, remtest, replacer) => apply_without_tag(cur => {
   let prev = '';
+  let trie = new Trie(list);
   for (;;) {
     let tagbegin = cur.indexOf(':') + 1;
     if (!tagbegin) break;
@@ -215,30 +216,23 @@ const le_curry = (trie, remtest, replacer) => (cur) => {
     }
   }
   return prev + cur;
-};
+});
 
-trlist.push(apply_without_tag(raw =>
-  le_curry(
-    new Trie(Object.keys(shorttab)),
-    (match, rem) => shorttab[match].remtest && shorttab[match].remtest(rem),
-    (match, rem) => {
-      let name = match + (rem || '');
-      let rtn = `<img class="emojione" alt=":${name}:" title=":${name}:" src="`
-      rtn += (shorttab[match].path ? shorttab[match].path(match, rem) : `/emoji/v6don/${match}.svg`) + '"';
-      if (shorttab[match].append) {
-        rtn += ' ' + (shorttab[match].append(match, rem) || '');
-      }
-      rtn += "/>";
-      return rtn;
+trlist.push(shortname_match(
+  Object.keys(shorttab),
+  (match, rem) => shorttab[match].remtest && shorttab[match].remtest(rem),
+  (match, rem) => {
+    let name = match + (rem || '');
+    let rtn = `<img class="emojione" alt=":${name}:" title=":${name}:" src="`
+    rtn += (shorttab[match].path ? shorttab[match].path(match, rem) : `/emoji/v6don/${match}.svg`) + '"';
+    if (shorttab[match].append) {
+      rtn += ' ' + (shorttab[match].append(match, rem) || '');
     }
-  )(raw)));
+    rtn += "/>";
+    return rtn;
+  }));
 
-trlist.push(apply_without_tag(raw =>
-  le_curry(
-    new Trie(Object.keys(monosvg)),
-    null,
-    (name) => monosvg[name]
-  )(raw)));
+trlist.push(shortname_match(Object.keys(monosvg), null, (name) => monosvg[name]));
 
 // 絵文字化させたくないやつ
-trlist.push(apply_without_tag(s => s.replace(/[®©™■-◿〽]/ug, c => hesc(c))));
+trlist.push(apply_without_tag(s => s.replace(/[®©™■-◿〽]/ug, c => `&#${c.codePointAt(0)};`)));
