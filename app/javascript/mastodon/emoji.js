@@ -3,18 +3,19 @@ import Trie from 'substring-trie';
 import highlight from './v6don-highlighter';
 
 const trie = new Trie(Object.keys(unicodeMapping));
+const excluded = "®©™";
 
 const emojify = str => {
   let rtn = "";
   for (;;) {
-    let match, c, i = 0;
-    while (i < str.length && (c = str[i]) != '<' && c != '&' && !(match = trie.search(str.slice(i)))) {
+    let match, c, i = 0, tag;
+    while (i < str.length && (excluded.indexOf(c = str[i]) != -1 || (tag = "<&".indexOf(c)) == -1 && !(match = trie.search(str.slice(i))))) {
       i += str.codePointAt(i) < 65536 ? 1 : 2;
     }
     if (i == str.length)
       break;
-    else if (c == '<' || c == '&') {
-      let tagend = str.indexOf(">;"["<&".indexOf(c)], i + 1) + 1;
+    else if (tag >= 0) {
+      let tagend = str.indexOf(">;"[tag], i + 1) + 1;
       if (!tagend)
         break;
       rtn += str.slice(0, tagend);

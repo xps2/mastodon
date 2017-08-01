@@ -2,9 +2,11 @@ import Trie from 'substring-trie';
 
 // ↓の配列に絵文字置換対象の文字列を受け取って置換を施した文字列を返すという
 // 関数を追加していく
-const trlist = [];
-const highlight = text => trlist.reduce((t, e) => e(t), text);
-export default highlight;
+const trlist = {pre: [], rec:[], post: []};
+const tr = (text, order) => trlist[order].reduce((t, f) => f(t), text);
+const highlight = text => tr(text, "rec");
+const highlight_root = text => ["pre", "rec", "post"].reduce((t, o) => tr(t, o), text);
+export default highlight_root;
 
 // ユーティリティ
 const hesc = raw => {
@@ -24,7 +26,7 @@ const hesc = raw => {
 };
 
 const unesc = str => {
-  if (str.indexOf('<') != -1) {
+  if (str.indexOf('<') != -1 || str.indexOf('>') != -1) {
     throw new Error("can't unescape string containing tags");
   }
   let elem = document.createElement("div");
@@ -39,10 +41,17 @@ const apply_without_tag = f => str => {
   while (str) {
     let tagbegin = str.indexOf('<');
     if (tagbegin == -1) {
-      rtn += f(str);
+      // rtn += f(str);
+      // break;
+      // spec を通すため片割れの ">" の判別
+      while ((tagbegin = str.indexOf('>')) != -1) {
+        rtn += (tagbegin ? f(str.slice(0, tagbegin)) : '') + '>';
+        str = str.slice(tagbegin + 1);
+      }
+      rtn += str ? f(str) : '';
       break;
     }
-    rtn += f(str.slice(0, tagbegin));
+    rtn += tagbegin ? f(str.slice(0, tagbegin)) : '';
     let tagend = str.indexOf('>', tagbegin + 1) + 1;
     if (!tagend) {
       rtn += str.slice(tagbegin);
@@ -57,7 +66,7 @@ const apply_without_tag = f => str => {
 // ここから関数登録
 
 // ^H^H
-trlist.push(apply_without_tag(s => {
+trlist.pre.push(apply_without_tag(s => {
   let rtn = ''
   s = unesc(s);
   while (s) {
@@ -86,6 +95,7 @@ trlist.push(apply_without_tag(s => {
 const byre = [];
 
 byre.push({
+  order: "pre",
   re: /((‡+|†+)([^†‡]{1,30}?))(‡+|†+)/,
   fmt: (m, skip, d1, txt, d2) => {
     if (d1[0] != d2[0]) return null;
@@ -94,6 +104,7 @@ byre.push({
 });
 
 byre.push({
+  order: "pre",
   re: /((✨+)( ?IPv6[^✨]*))(✨+)/u,
   fmt: (m, skip, s1, ip, s2) => {
     let f = k => k.replace(/./ug, `<span class="v6don-kira">✨</span>`);
@@ -161,6 +172,7 @@ byre.push(...[
     text.replace(/:don:/g, hesc(":don:")) + "</a>"
   },
   {re: /:don:/g, fmt: `<a href="https://mstdn.maud.io/">:don:</a>`},
+  {order: "post", re: /[■-◿〽]/ug, fmt: c => `&#${c.codePointAt(0)};`},
 ]);
 
 const replace_by_re = (re, fmt) => str => {
@@ -183,7 +195,9 @@ const replace_by_re = (re, fmt) => str => {
   return rtn + str;
 }
 
-trlist.push(...byre.map(e => e.tag ? replace_by_re(e.re, e.fmt) : apply_without_tag(replace_by_re(e.re, e.fmt))));
+byre.forEach(e => {
+  trlist[e.order ? e.order : "rec"].push(e.tag ? replace_by_re(e.re, e.fmt) : apply_without_tag(replace_by_re(e.re, e.fmt)));
+});
 
 // :tag:の置換
 const shorttab = {};
@@ -236,7 +250,7 @@ const shortname_match = (list, remtest, replacer) => apply_without_tag(cur => {
 });
 
 // :tag: をフツーにimgで返すやつ
-trlist.push(shortname_match(
+trlist.rec.push(shortname_match(
   Object.keys(shorttab),
   (match, rem) => shorttab[match].remtest && shorttab[match].remtest(rem),
   (match, rem) => {
@@ -254,7 +268,7 @@ trlist.push(shortname_match(
 const monosvg = {};
 ["hiki", "hohoemi", "ken", "tama", "tree"].forEach(n => {monosvg[n] = null});
 
-trlist.push(shortname_match(Object.keys(monosvg), null, (name) => {
+trlist.rec.push(shortname_match(Object.keys(monosvg), null, (name) => {
   if (monosvg[name]) return monosvg[name];
 
   if (monosvg[name] === null) {
@@ -266,7 +280,7 @@ trlist.push(shortname_match(Object.keys(monosvg), null, (name) => {
       if (res.ok) {
         res.text().then(txt => {
           // 読み込めた時
-          let s = txt.replace(/\n/mg, ' ');
+          let s = txt.replace(/\n/mg, ' ').trim();
           let i = s.indexOf('>');
           // 以後はこのSVGテキストをそのまま使う
           monosvg[name] = s.slice(0,i) + ` class="emojione v6don-monosvg"><title>:${escname}:</title><description>:${escname}:</description` + s.slice(i);
@@ -278,7 +292,7 @@ trlist.push(shortname_match(Object.keys(monosvg), null, (name) => {
             [].forEach.call(document.body.getElementsByClassName(`monosvg-replacee-${name}`) || [], e => {
               e.parentNode.replaceChild(svg.cloneNode(true), e);
             });
-          }, 25);
+          }, 300);
         });
       }
       else {
@@ -290,6 +304,3 @@ trlist.push(shortname_match(Object.keys(monosvg), null, (name) => {
   // SVG取得まで仮置き
   return `<span class="monosvg-replacee-${name}">:${hesc(name)}:</span>`;
 }));
-
-// 絵文字化させたくないやつ
-trlist.push(apply_without_tag(s => s.replace(/[®©™■-◿〽]/ug, c => `&#${c.codePointAt(0)};`)));
