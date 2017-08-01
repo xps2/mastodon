@@ -4,12 +4,9 @@ import monosvg from '../images/v6don-monosvg';
 
 // ↓の配列に絵文字置換対象の文字列を受け取って置換を施した文字列を返すという
 // 関数を追加していく
-const highlighter = {
-  pre: [], post: []
-};
-export default function(order, text) {
-  return highlighter[order].reduce((t, e) => e(t), text);
-};
+const trlist = [];
+const highlight = text => trlist.reduce((t, e) => e(t), text);
+export default highlight;
 
 // ユーティリティ
 const hesc = raw => {
@@ -39,7 +36,7 @@ const unesc = str => {
 
 const ununesc = str => str.replace(/[&<>]/g, e => ({"&": "&amp;", "<": "&lt;", ">": "&gt;"})[e]);
 
-const apply_without_tag = (str, f) => {
+const apply_without_tag = f => str => {
   let rtn = '';
   while (str) {
     let tagbegin = str.indexOf('<');
@@ -62,7 +59,7 @@ const apply_without_tag = (str, f) => {
 // ここから関数登録
 
 // ^H^H
-highlighter.pre.push(str => apply_without_tag(str, s => {
+trlist.push(apply_without_tag(s => {
   let rtn = ''
   s = unesc(s);
   while (s) {
@@ -87,21 +84,15 @@ highlighter.pre.push(str => apply_without_tag(str, s => {
   return rtn + ununesc(s);
 }));
 
-// 絵文字化させたくないやつ
-highlighter.pre.push(str => apply_without_tag(str, s => s.replace(/[®©™■-◿〽]/ug, c => hesc(c))));
-
 // 置換をString.replace()に投げるやつ
-const byre = {
-  pre: [],
-  post: [
-    {tag: true, re: /(<a\s[^>]*>)(.*?:don:.*?)<\/a>/mg, fmt: (all, tag, text) => tag + 
-      text.replace(/:don:/g, hesc(":don:")) + "</a>"
-    },
-    {re: /:don:/g, fmt: `<a href="https://mstdn.maud.io/">:don:</a>`},
-  ],
-};
+const byre = [
+  {tag: true, re: /(<a\s[^>]*>)(.*?:don:.*?)<\/a>/mg, fmt: (all, tag, text) => tag + 
+    text.replace(/:don:/g, hesc(":don:")) + "</a>"
+  },
+  {re: /:don:/g, fmt: `<a href="https://mstdn.maud.io/">:don:</a>`},
+];
 
-byre.post.push(...[
+byre.push(...[
   {re: /5,?000\s?兆円/g, img: '5000tyoen.svg'},
   {re: /5,?000兆/g, img: '5000tyo.svg'},
 ].map(e => {
@@ -109,7 +100,7 @@ byre.post.push(...[
     return e;
 }));
 
-byre.pre.push({
+byre.push({
   re: /(‡+|†+)([^†‡]{1,30}?)(‡+|†+)/g,
   fmt: (m, d1, txt, d2) => {
     if (d1[0] != d2[0]) return m;
@@ -117,25 +108,18 @@ byre.pre.push({
   },
 });
 
-byre.pre.push({
+byre.push({
   re: /(✨+)( ?IPv6[^✨]*)(✨+)/ug,
   fmt: (m, s1, ip, s2) => {
     let f = k => k.replace(/✨/g, s => `<span class="v6don-kira">${s}</span>`);
     
     let ipdeco = ""
-    ip = emojify(ip);
+    ip = highlight(ip);
     for (let chars = 0, delay = 0; ip.length && chars < 11; chars++) {
       let deco = true, decolen;
       let rr = /^\s/u.exec(ip);
       if (rr) {
         deco = false;
-        decolen = rr[0].length;
-      }
-      else if (ip[0] == ":") {
-        rr = /^:[\w\d-]+:/.exec(ip);
-        if (!rr) {
-          return m;
-        }
         decolen = rr[0].length;
       }
       else if (ip[0] == "&") {
@@ -179,11 +163,10 @@ byre.pre.push({
   }
 });
 
-["pre", "post"].forEach(order => {
-  highlighter[order].push(...byre[order].map(e => e.tag ?
-    str => str.replace(e.re, e.fmt) :
-    str => apply_without_tag(str, s => s.replace(e.re, e.fmt))));
-})
+
+trlist.push(...byre.map(e => e.tag ?
+  str => str.replace(e.re, e.fmt) :
+  apply_without_tag(s => s.replace(e.re, e.fmt))));
 
 // :tag:の置換
 const shorttab = {};
@@ -234,7 +217,7 @@ const le_curry = (trie, remtest, replacer) => (cur) => {
   return prev + cur;
 };
 
-highlighter.post.push(str => apply_without_tag(str, raw =>
+trlist.push(apply_without_tag(raw =>
   le_curry(
     new Trie(Object.keys(shorttab)),
     (match, rem) => shorttab[match].remtest && shorttab[match].remtest(rem),
@@ -250,9 +233,12 @@ highlighter.post.push(str => apply_without_tag(str, raw =>
     }
   )(raw)));
 
-highlighter.post.push(str => apply_without_tag(str, raw =>
+trlist.push(apply_without_tag(raw =>
   le_curry(
     new Trie(Object.keys(monosvg)),
     null,
     (name) => monosvg[name]
   )(raw)));
+
+// 絵文字化させたくないやつ
+trlist.push(apply_without_tag(s => s.replace(/[®©™■-◿〽]/ug, c => hesc(c))));

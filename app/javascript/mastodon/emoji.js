@@ -28,7 +28,6 @@ const emojify = str => {
   return rtn + str;
 }
 
-const emojify_v6don = text =>
-  highlight("post", emojify(highlight("pre", text)));
+const emojify_v6don = text => emojify(highlight(text));
   
 export default emojify_v6don;

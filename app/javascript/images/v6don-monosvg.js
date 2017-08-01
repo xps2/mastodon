@@ -2,7 +2,6 @@ const template = {};
 export default template;
 
 template.hohoemi = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 760">
-<circle stroke-width="24" cx="380" cy="380" r="368" class="v6don-fg-stroke"/>
 <path
 class="v6don-fg-round"
 d="
@@ -40,7 +39,7 @@ template.ken = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <g>
     <line x1="10" y1="20" x2="30" y2="20" />
     <line x1="20" y1="20" x2="10" y2="40" />
-    <path d="M15,34 l12,0 l0,15 l-12,0 z" stroke="none" class="v6don-fg-round"/>
+    <path d="M15,34 l12,0 l0,15 l-12,0 z" />
     <line x1="32" y1="16" x2="52" y2="16" />
     <line x1="30" y1="30" x2="56" y2="30" />
     <line x1="38" y1="16" x2="38" y2="54" />
@@ -82,7 +81,7 @@ template.tree = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
 
 Object.keys(template).forEach(k => {
   let n = k.replace(/./ug, c => `&#${c.codePointAt(0)};`);
-  let s = template[k];
+  let s = template[k].replace(/\n/mg, ' ');
   let i = s.indexOf('>') ;
   template[k] = s.slice(0,i) + ` class="emojione v6don-monosvg"><title>:${n}:</title><description>:${n}:</description` + s.slice(i);
 });
