@@ -13,7 +13,7 @@ excluded.forEach(c => {
   }
 });
 if (notintab.length) {
-  console.warn(`Excluded character(s) for emojify() [${notintab.join(', ')}] are not defined in unicodeMapping. Please contact the webmaster to solve it.`)
+  console.warn(`Excluded character(s) for emojify() [${notintab.join(', ')}] is not defined in unicodeMapping. Please contact the webmaster to fix it.`)
 }
 
 const trie = new Trie(Object.keys(unicodeMapping));
@@ -21,8 +21,8 @@ const trie = new Trie(Object.keys(unicodeMapping));
 const emojify = str => {
   let rtn = "";
   for (;;) {
-    let match, c, i = 0, tag;
-    while (i < str.length && ((tag = "<&".indexOf(c = str[i])) == -1 && !(match = trie.search(str.slice(i))))) {
+    let match, i = 0, tag;
+    while (i < str.length && (tag = "<&".indexOf(str[i])) == -1 && !(match = trie.search(str.slice(i)))) {
       i += str.codePointAt(i) < 65536 ? 1 : 2;
     }
     if (i == str.length)

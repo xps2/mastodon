@@ -200,23 +200,8 @@ byre.forEach(e => {
 });
 
 // :tag:の置換
-const shorttab = {};
 
-[
-  "nicoru", "iine", "irane", "mayo",
-].forEach(name => {
-  shorttab[name] = {
-    remtest: (rem) => /^\d+$/.test(rem),
-    append: (_, rem) => rem ? `style="transform: rotate(${rem}deg)"` : '',
-  };
-});
-[
-  "rmn_e",
-].forEach(name => {
-  shorttab[name] = {};
-})
-shorttab.realtek = {path: () => "/emoji/proprietary/realtek.svg", append: () => `style="width: 4.92em"`};
-
+// 共通処理
 const shortname_match = (list, remtest, replacer) => apply_without_tag(cur => {
   let prev = '';
   let trie = new Trie(list);
@@ -250,6 +235,23 @@ const shortname_match = (list, remtest, replacer) => apply_without_tag(cur => {
 });
 
 // :tag: をフツーにimgで返すやつ
+const shorttab = {};
+[
+  "rmn_e",
+].forEach(name => {
+  shorttab[name] = {};
+});
+// 回転対応絵文字
+[
+  "nicoru", "iine", "irane", "mayo",
+].forEach(name => {
+  shorttab[name] = {
+    remtest: (rem) => /^\d+$/.test(rem),
+    append: (_, rem) => rem ? `style="transform: rotate(${rem}deg)"` : '',
+  };
+});
+shorttab.realtek = {path: () => "/emoji/proprietary/realtek.svg", append: () => `style="width: 4.92em"`};
+
 trlist.rec.push(shortname_match(
   Object.keys(shorttab),
   (match, rem) => shorttab[match].remtest && shorttab[match].remtest(rem),
