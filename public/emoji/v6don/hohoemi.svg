@@ -1,4 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 760">
+<style><![CDATA[
+.v6don-fg-stroke {
+  stroke: black;
+  fill: none;
+}
+]]></style>
 <path
 class="v6don-fg-round"
 d="

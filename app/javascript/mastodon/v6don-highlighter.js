@@ -279,11 +279,12 @@ trlist.rec.push(shortname_match(Object.keys(monosvg), null, (name) => {
       let escname = hesc(name);
       if (res.ok) {
         res.text().then(txt => {
-          // 読み込めた時
-          let s = txt.replace(/\n/mg, ' ').trim();
-          let i = s.indexOf('>');
-          // 以後はこのSVGテキストをそのまま使う
-          monosvg[name] = s.slice(0,i) + ` class="emojione v6don-monosvg"><title>:${escname}:</title><description>:${escname}:</description` + s.slice(i);
+          // 読み込めた時、以後はこのSVGテキストをそのまま使う
+          monosvg[name] = txt.replace(
+            /<style[\s\S]*?<\/style>/m, ''
+          ).replace(
+            />/, ` class="emojione v6don-monosvg"><title>:${escname}:</title><desc>:${escname}:</desc>`
+          ).replace(/\n/mg, ' ').trim();
           // 仮置きしたspanをDOMで置換
           let dp = new DOMParser();
           let svg = dp.parseFromString(monosvg[name], "application/xml").documentElement;
