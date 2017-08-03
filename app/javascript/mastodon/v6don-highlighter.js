@@ -160,10 +160,10 @@ byre.push({
 });
 
 byre.push(...[
-  {re: /5,?000\s?兆円/g, img: '5000tyoen.svg'},
-  {re: /5,?000兆/g, img: '5000tyo.svg'},
+  {re: /5,?000\s?兆円/g, img: require('../images/v6don/5000tyoen.svg')},
+  {re: /5,?000兆/g, img: require('../images/v6don/5000tyo.svg')},
 ].map(e => {
-    e.fmt = (m) => `<img alt="${hesc(m)}" src="/emoji/v6don/${e.img}"/>`;
+    e.fmt = (m) => `<img alt="${hesc(m)}" src="${e.img}"/>`;
     return e;
 }));
 
@@ -239,7 +239,10 @@ const shorttab = {};
 [
   "rmn_e",
 ].forEach(name => {
-  shorttab[name] = {};
+  shorttab[name] = {
+    path: name => shorttab[name].asset,
+    asset: require(`../images/v6don/${name}.svg`),
+  };
 });
 // 回転対応絵文字
 [
@@ -248,6 +251,8 @@ const shorttab = {};
   shorttab[name] = {
     remtest: (rem) => /^\d+$/.test(rem),
     append: (_, rem) => rem ? `style="transform: rotate(${rem}deg)"` : '',
+    path: name => shorttab[name].asset,
+    asset: require(`../images/v6don/${name}.svg`),
   };
 });
 shorttab.realtek = {path: () => "/emoji/proprietary/realtek.svg", append: () => `style="width: 4.92em"`};
@@ -257,8 +262,7 @@ trlist.rec.push(shortname_match(
   (match, rem) => shorttab[match].remtest && shorttab[match].remtest(rem),
   (match, rem) => {
     let name = match + (rem || '');
-    let rtn = `<img class="emojione" alt=":${name}:" title=":${name}:" src="`
-    rtn += (shorttab[match].path ? shorttab[match].path(match, rem) : `/emoji/v6don/${match}.svg`) + '"';
+    let rtn = `<img class="emojione" alt=":${name}:" title=":${name}:" src="${shorttab[match].path(match, rem)}"`;
     if (shorttab[match].append) {
       rtn += ' ' + (shorttab[match].append(match, rem) || '');
     }
@@ -268,28 +272,34 @@ trlist.rec.push(shortname_match(
 
 // :tag: の単色SVG版
 const monosvg = {};
-["hiki", "hohoemi", "ken", "tama", "tree"].forEach(n => {monosvg[n] = null});
+["hiki", "hohoemi", "lab", "tama", "tree"].forEach(name => {
+  monosvg[name] = {
+    text: null,
+    loading: false,
+    asset: require(`../images/v6don/${name}.svg`),
+  };
+});
 
 trlist.rec.push(shortname_match(Object.keys(monosvg), null, (name) => {
-  if (monosvg[name]) return monosvg[name];
+  if (monosvg[name].text) return monosvg[name].text;
 
-  if (monosvg[name] === null) {
+  if (!monosvg[name].loading) {
     // SVGを読みに行く
-    monosvg[name] = ''; // 空文字列で読み込み中を提示
+    monosvg[name].loading = true;
     // 取得処理
-    fetch(`/emoji/v6don/${name}.svg`).then(res => {
+    fetch(monosvg[name].asset).then(res => {
       let escname = hesc(name);
       if (res.ok) {
         res.text().then(txt => {
           // 読み込めた時、以後はこのSVGテキストをそのまま使う
-          monosvg[name] = txt.replace(
+          monosvg[name].text = txt.replace(
             /<style[\s\S]*?<\/style>/m, ''
           ).replace(
-            />/, ` class="emojione v6don-monosvg"><title>:${escname}:</title><desc>:${escname}:</desc>`
-          ).replace(/\n/mg, ' ').trim();
+            />/, ` class="emojione v6don-monosvg"><g><title>:${escname}:</title><desc>:${escname}:</desc>`
+          ).replace(/<\/svg>/, '</g></svg>').replace(/\n/mg, ' ').trim();
           // 仮置きしたspanをDOMで置換
           let dp = new DOMParser();
-          let svg = dp.parseFromString(monosvg[name], "application/xml").documentElement;
+          let svg = dp.parseFromString(monosvg[name].text, "application/xml").documentElement;
           let replace = () => {
             [].forEach.call(document.body.getElementsByClassName(`monosvg-replacee-${name}`) || [], e => {
               e.parentNode.replaceChild(svg.cloneNode(true), e);
@@ -302,7 +312,7 @@ trlist.rec.push(shortname_match(Object.keys(monosvg), null, (name) => {
       }
       else {
         // 読み込めなかった時は再取得を促す
-        monosvg[name] = null;
+        monosvg[name].loading = false;
       }
     });
   }

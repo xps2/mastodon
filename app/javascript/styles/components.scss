@@ -2575,6 +2575,11 @@ button.icon-button.active i.fa-retweet {
       padding: 2.5px;
       border-radius: 4px;
     }
+
+    .emojione {
+      width: 22px;
+      height: 22px;
+    }
   }
 
   .emoji-category-header {
@@ -2674,6 +2679,7 @@ button.icon-button.active i.fa-retweet {
     img,
     svg {
       transition: transform 60ms ease-in-out;
+      transform-origin: center;
     }
 
     &:hover {
@@ -2804,7 +2810,7 @@ button.icon-button.active i.fa-retweet {
     outline: 0 !important;
   }
 
-  img {
+  svg {
     filter: grayscale(100%);
     opacity: 0.8;
     display: block;
@@ -2817,14 +2823,14 @@ button.icon-button.active i.fa-retweet {
   &:hover,
   &:active,
   &:focus {
-    img {
+    svg {
       opacity: 1;
       filter: none;
     }
   }
 }
 
-.dropdown--active .emoji-button img {
+.dropdown--active .emoji-button svg {
   opacity: 1;
   filter: none;
 }

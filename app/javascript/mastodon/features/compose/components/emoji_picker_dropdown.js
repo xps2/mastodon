@@ -3,6 +3,7 @@ import Dropdown, { DropdownTrigger, DropdownContent } from 'react-simple-dropdow
 import PropTypes from 'prop-types';
 import { defineMessages, injectIntl } from 'react-intl';
 import { EmojiPicker as EmojiPickerAsync } from '../../ui/util/async-components';
+import sprites from '../../../../images/emojione.sprites.svg';
 
 const messages = defineMessages({
   emoji: { id: 'emoji_button.label', defaultMessage: 'Insert emoji' },
@@ -18,9 +19,9 @@ const messages = defineMessages({
 });
 
 const settings = {
-  imageType: 'png',
-  sprites: false,
-  imagePathPNG: '/emoji/',
+  imageType: 'svg',
+  sprites: true,
+  imagePathSVGSprites: sprites,
 };
 
 let EmojiPicker; // load asynchronously
@@ -125,17 +126,15 @@ export default class EmojiPickerDropdown extends React.PureComponent {
     return (
       <Dropdown ref={this.setRef} className='emoji-picker__dropdown' active={active && !loading} onShow={this.onShowDropdown} onHide={this.onHideDropdown}>
         <DropdownTrigger className='emoji-button' title={title} aria-label={title} aria-expanded={active} role='button' onKeyDown={this.onToggle} tabIndex={0} >
-          <img
+          <svg viewBox='0 0 1 1'
             className={`emojione ${active && loading ? 'pulse-loading' : ''}`}
-            alt='🙂'
-            src='/emoji/1f602.svg'
-          />
+          ><g><desc>🙂</desc><use xlinkHref={sprites + '#emoji-1f602'}/></g></svg>
         </DropdownTrigger>
 
         <DropdownContent className='dropdown__left'>
           {
             this.state.active && !this.state.loading &&
-            (<EmojiPicker emojione={settings} onChange={this.handleChange} searchPlaceholder={intl.formatMessage(messages.emoji_search)} onKeyDown={this.onEmojiPickerKeyDown} categories={categories} search />)
+            (<EmojiPicker emojione={settings} onChange={this.handleChange} searchPlaceholder={intl.formatMessage(messages.emoji_search)} onKeyDown={this.onEmojiPickerKeyDown} categories={categories} search/>)
           }
         </DropdownContent>
       </Dropdown>
