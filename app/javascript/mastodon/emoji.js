@@ -1,6 +1,6 @@
 import { unicodeMapping } from './emojione_light';
 import Trie from 'substring-trie';
-import sprites from '../images/emojione.sprites.svg';
+import sprites from '../images/emojione-sprites-path';
 import highlight from './v6don-highlighter';
 
 const trie = new Trie(Object.keys(unicodeMapping));
@@ -23,9 +23,7 @@ const emojify = str => {
     }
     else {
       const [codeSeq, shortCode] = unicodeMapping[match];
-      rtn += str.slice(0, i) + `<svg
-          xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink"
+      rtn += str.slice(0, i) + `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
           class="emojione" viewBox="0 0 1 1"
         ><g><title>:${shortCode}:</title><desc>${match}</desc><use xlink:href="${sprites}#emoji-${codeSeq}"/></g></svg>`;
       str = str.slice(i + match.length);
