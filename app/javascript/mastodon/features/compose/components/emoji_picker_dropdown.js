@@ -127,7 +127,7 @@ export default class EmojiPickerDropdown extends React.PureComponent {
       <Dropdown ref={this.setRef} className='emoji-picker__dropdown' active={active && !loading} onShow={this.onShowDropdown} onHide={this.onHideDropdown}>
         <DropdownTrigger className='emoji-button' title={title} aria-label={title} aria-expanded={active} role='button' onKeyDown={this.onToggle} tabIndex={0} >
           <svg viewBox='0 0 1 1' className={`emojione ${active && loading ? 'pulse-loading' : ''}`}
-          ><g><desc>🙂</desc><use xlinkHref={sprites + '#emoji-1f602'}/></g></svg>
+          ><g><desc>{'\ud83d\ude42' /*satisfy lint 🙂*/}</desc><use xlinkHref={sprites + '#emoji-1f602'}/></g></svg>
         </DropdownTrigger>
 
         <DropdownContent className='dropdown__left'>
