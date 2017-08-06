@@ -60,3 +60,5 @@ docker-compose.override.yml
 public/emoji/proprietary
 public/emoji/**/*.gz
 public/emoji/**/*.br
+
+public/sounds/proprietary
