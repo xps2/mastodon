@@ -6,40 +6,38 @@ export default function localQuote(text) {
         return qcount(line.slice(m[0].length), level + 1);
       }
       return level;
-    }
-    
+    };
+
     var lines = cont.split(/<br\s?\/?>/);
     var qre = /^(&gt;|＞)\s*/;
     var current = 0;
-    var rtn = lines.map(line => qcount(line, 0)).map((level, idx, arr) => {
+    var rtn = lines.map(line => qcount(line, 0)).map((level, idx) => {
       var diff = level - current;
       var line;
       if (diff > 0) {
-        var bq = ""
-        while (diff--) bq += "<blockquote>";
+        var bq = '';
+        while (diff--) bq += '<blockquote>';
         line = `</p>${bq}<p>${lines[idx]}`;
-      }
-      else if (diff == 0) {
+      } else if (diff === 0) {
         line = `<br/>${lines[idx]}`;
-      }
-      else {
-        var bq = "";
-        while (diff++) bq += "</blockquote>";
+      } else {
+        var bq = '';
+        while (diff++) bq += '</blockquote>';
         line = `${bq}<p>${lines[idx]}`;
       }
       current = level;
       return line;
-    }).join("");
+    }).join('');
     if (current > 0) {
-        var bq = "";
-        while (current--) bq += "</blockquote>";
-        rtn = `${rtn}</p>${bq}<p>`;
+      var bq = '';
+      while (current--) bq += '</blockquote>';
+      rtn = `${rtn}</p>${bq}<p>`;
     }
-    
+
     var rmtopbr = text => {
-      var ret = text.replace(/(<p(?:\s[^>]*)?>)\s*<br\/>/mg, "$1");
-      return ret == text ? text : rmtopbr(ret);
+      var ret = text.replace(/(<p(?:\s[^>]*)?>)\s*<br\/>/mg, '$1');
+      return ret === text ? text : rmtopbr(ret);
     };
-    return rmtopbr(`${popen}${rtn}</p>`).replace(/<p(?:\s[^>]*)?>\s*<\/p>/mg, "");
+    return rmtopbr(`${popen}${rtn}</p>`).replace(/<p(?:\s[^>]*)?>\s*<\/p>/mg, '');
   });
 }

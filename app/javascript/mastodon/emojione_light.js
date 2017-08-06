@@ -4,7 +4,7 @@
 const emojione = require('emojione');
 
 const mappedUnicode = emojione.mapUnicodeToShort();
-const excluded = ["®", "©", "™"];
+const excluded = ['®', '©', '™'];
 
 const keys = Object.keys(emojione.jsEscapeMap);
 excluded.forEach(c => {

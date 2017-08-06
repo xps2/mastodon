@@ -4,7 +4,8 @@ import { injectIntl } from 'react-intl';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
 
-import { links, getIndex, getLink } from './tabs_bar';
+//import { links, getIndex, getLink } from './tabs_bar';
+import { getIndex } from './tabs_bar';
 
 import BundleContainer from '../containers/bundle_container';
 import ColumnLoading from './column_loading';
@@ -79,9 +80,9 @@ export default class ColumnsArea extends ImmutablePureComponent {
 
   render () {
     const { columns, children, singleColumn } = this.props;
-    const { shouldAnimate } = this.state;
+//    const { shouldAnimate } = this.state;
 
-    const columnIndex = getIndex(this.context.router.history.location.pathname);
+//    const columnIndex = getIndex(this.context.router.history.location.pathname);
     this.pendingIndex = null;
 
     if (singleColumn) {

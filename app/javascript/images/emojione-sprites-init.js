@@ -8,10 +8,10 @@ if (/^(https?:)?\/\//.test(sprites)) {
       if (res.ok) {
         return res.text();
       }
-      throw new Error("response error!?");
+      throw new Error('response error!?');
     }).then(txt => {
       document.head.appendChild(new DOMParser().parseFromString(txt, 'text/xml').documentElement);
-    }).catch(e => {
+    }).catch(() => {
       if (retry) {
         setTimeout(loadSprites, 500, --retry);
       }
