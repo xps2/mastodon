@@ -60,6 +60,7 @@ export default class ColumnsArea extends ImmutablePureComponent {
     }
   }
 
+/*
   handleSwipe = (index) => {
     this.pendingIndex = index;
 
@@ -79,7 +80,7 @@ export default class ColumnsArea extends ImmutablePureComponent {
       this.pendingIndex = null;
     }
   }
-
+*/
   setRef = (node) => {
     this.node = node;
   }

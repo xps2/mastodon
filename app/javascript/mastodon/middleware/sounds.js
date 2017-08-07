@@ -23,7 +23,7 @@ export default function soundsMiddleware() {
     boop: createAudio([
       {
         src: '/sounds/proprietary/okdesuka.opus',
-        type: 'audio/ogg;codec=opus',
+        type: 'audio/ogg;codecs=opus',
       },
       {
         src: '/sounds/boop.ogg',
