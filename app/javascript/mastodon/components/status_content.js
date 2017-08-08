@@ -8,7 +8,7 @@ import { FormattedMessage } from 'react-intl';
 import Permalink from './permalink';
 import classnames from 'classnames';
 
-import localQuote from '../quote';
+import localQuote from '../v6don/quote';
 
 export default class StatusContent extends React.PureComponent {
 

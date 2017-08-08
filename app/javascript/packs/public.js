@@ -1,5 +1,5 @@
 import loadPolyfills from '../mastodon/load_polyfills';
-import localQuote from '../mastodon/quote';
+import localQuote from '../mastodon/v6don/quote';
 
 function main() {
   const { length } = require('stringz');

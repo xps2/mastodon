@@ -152,8 +152,8 @@ byre.push({
 });
 
 byre.push(...[
-  { re: /5,?000\s?兆円/g, img: require('../images/v6don/5000tyoen.svg') },
-  { re: /5,?000兆/g, img: require('../images/v6don/5000tyo.svg') },
+  { re: /5,?000\s?兆円/g, img: require('../../images/v6don/5000tyoen.svg') },
+  { re: /5,?000兆/g, img: require('../../images/v6don/5000tyo.svg') },
 ].map(e => {
   e.fmt = (m) => `<img alt="${hesc(m)}" src="${e.img}"/>`;
   return e;
@@ -230,7 +230,7 @@ const shorttab = {};
 ].forEach(name => {
   shorttab[name] = {
     path: name => shorttab[name].asset,
-    asset: require(`../images/v6don/${name}.svg`),
+    asset: require(`../../images/v6don/${name}.svg`),
   };
 });
 // 回転対応絵文字
@@ -239,23 +239,33 @@ const shorttab = {};
 ].forEach(name => {
   shorttab[name] = {
     remtest: (rem) => /^\d+$/.test(rem),
-    append: (_, rem) => rem ? `style="transform: rotate(${rem}deg)"` : '',
+    append: (img, name, rem) => rem ? img.replace('/>', ` style="transform: rotate(${rem}deg)"/>`) : img,
     path: name => shorttab[name].asset,
-    asset: require(`../images/v6don/${name}.svg`),
+    asset: require(`../../images/v6don/${name}.svg`),
   };
 });
-shorttab.realtek = { path: () => '/emoji/proprietary/realtek.svg', append: () => 'style="width: 4.92em"' };
+
+// 不自由なロゴ達
+const proprietary_image = {
+  realtek: { ratio: 4.92 },
+  sega: { ratio:  3.29 },
+};
+for (name in proprietary_image) {
+  shorttab[name] = {
+    path: name => `/emoji/proprietary/${name}.svg`,
+    append: proprietary_image[name].ratio ? (img, name) => img.replace('/>', ` style="width: ${proprietary_image[name].ratio}em"/>`) : null,
+  };
+}
 
 trlist.rec.push(shortname_match(
   Object.keys(shorttab),
   (match, rem) => shorttab[match].remtest && shorttab[match].remtest(rem),
   (match, rem) => {
     let name = match + (rem || '');
-    let rtn = `<img class="emojione" alt=":${name}:" title=":${name}:" src="${shorttab[match].path(match, rem)}"`;
+    let rtn = `<img class="emojione" alt=":${name}:" title=":${name}:" src="${shorttab[match].path(match, rem)}" />`;
     if (shorttab[match].append) {
-      rtn += ' ' + (shorttab[match].append(match, rem) || '');
+      rtn = shorttab[match].append(rtn, match, rem) || rtn;
     }
-    rtn += '/>';
     return rtn;
   })
 );
@@ -266,7 +276,7 @@ const monosvg = {};
   monosvg[name] = {
     text: null,
     loading: false,
-    asset: require(`../images/v6don/${name}.svg`),
+    asset: require(`../../images/v6don/${name}.svg`),
   };
 });
 
@@ -290,14 +300,14 @@ trlist.rec.push(shortname_match(Object.keys(monosvg), null, (name) => {
           // 仮置きしたspanをDOMで置換
           let dp = new DOMParser();
           let svg = dp.parseFromString(monosvg[name].text, 'application/xml').documentElement;
-          let replace = () => {
+          let replace = (name) => {
             [].forEach.call(document.body.getElementsByClassName(`monosvg-replacee-${name}`) || [], e => {
               e.parentNode.replaceChild(svg.cloneNode(true), e);
             });
           };
-          replace();
+          replace(name);
           // 不安なのでもう1回する(謎)
-          setTimeout(replace, 1500);
+          //setTimeout(replace, 1500, name);
         });
       } else {
         // 読み込めなかった時は再取得を促す

@@ -1,7 +1,7 @@
 import { unicodeMapping } from './emojione_light';
 import Trie from 'substring-trie';
 import sprites from '../images/emojione-sprites-path';
-import highlight from './v6don-highlighter';
+import highlight from './v6don/highlighter';
 
 const trie = new Trie(Object.keys(unicodeMapping));
 
