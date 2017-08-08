@@ -22,9 +22,7 @@ const emojify = str => {
       str = str.slice(tagend);
     } else {
       const [codeSeq, shortCode] = unicodeMapping[match];
-      rtn += str.slice(0, i) + `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-          class="emojione" viewBox="0 0 1 1"
-        ><g><title>:${shortCode}:</title><desc>${match}</desc><use xlink:href="${sprites}#emoji-${codeSeq}"/></g></svg>`;
+      rtn += str.slice(0, i) + `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="emojione" viewBox="0 0 1 1"><g><title>:${shortCode}:</title><desc>${match}</desc><use xlink:href="${sprites}#emoji-${codeSeq}"/></g></svg>`;
       str = str.slice(i + match.length);
     }
   }

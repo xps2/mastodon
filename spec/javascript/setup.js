@@ -11,3 +11,7 @@ Object.keys(window).forEach(property => {
     global[property] = window[property];
   }
 });
+
+require.extensions['.svg'] = (mod, fn) => {
+  mod.exports = '/packs/' + fn.replace(/.*\//, '');
+};
