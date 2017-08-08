@@ -257,6 +257,14 @@ for (name in proprietary_image) {
   };
 }
 
+shorttab.biwako = {
+    remtest: rem => /^-[gyorpw]$/.test(rem),
+    append: (img, name, rem) =>
+      rem ? `<object class='emojione' data='${shorttab.biwako.asset}#${rem[1]}' title=':biwako-${rem[1]}:'>:biwako-${rem[1]}:</object>` : img,
+    path: name => shorttab.biwako.asset,
+    asset: require(`../../images/v6don/biwako.svg`),
+};
+
 trlist.rec.push(shortname_match(
   Object.keys(shorttab),
   (match, rem) => shorttab[match].remtest && shorttab[match].remtest(rem),

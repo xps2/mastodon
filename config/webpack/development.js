@@ -27,7 +27,7 @@ module.exports = merge(sharedConfig, {
     historyApiFallback: true,
     disableHostCheck: true,
     watchOptions: {
-      ignored: /node_modules/,
+      ignored: /node_modules|swp$/,
     },
   },
 });
