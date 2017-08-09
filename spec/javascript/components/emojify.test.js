@@ -19,7 +19,7 @@ describe('emojify', () => {
     expect(emojify('smile:')).to.equal('smile:');
     expect(emojify(':smile')).to.equal(':smile');
   });
-  
+
   const svgintro = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="emojione" viewBox="0 0 1 1"><g><title>';
   it('does unicode', () => {
     expect(emojify('\uD83D\uDC69\u200D\uD83D\uDC69\u200D\uD83D\uDC66\u200D\uD83D\uDC66')).to.equal(
