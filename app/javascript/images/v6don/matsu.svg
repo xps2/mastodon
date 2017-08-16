@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 100 100" height="100" width="100">
+  <defs>
+    <linearGradient id="linearGradient4274">
+      <stop id="stop4276" offset="0" style="stop-color:#dddddd;" />
+      <stop id="stop4278" offset="1" style="stop-color:#ffffff;" />
+    </linearGradient>
+    <radialGradient gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.92320635,-0.42863324,0.2675055,0.73509825,-272.02307,299.70853)"
+       r="50" fy="1038.8622" fx="77.200005" cy="1038.8622" cx="77.200005" id="radialGradient4282"
+       xlink:href="#linearGradient4274" />
+    <radialGradient gradientUnits="userSpaceOnUse"
+       r="12.5" fy="1047.4622" fx="91.900002" cy="1047.4622" cx="91.900002" id="radialGradient4290"
+       xlink:href="#linearGradient4274" />
+    <radialGradient gradientUnits="userSpaceOnUse"
+       r="12.5" fy="1048.4622" fx="14.7" cy="1048.4622" cx="14.7" id="radialGradient4298"
+       xlink:href="#linearGradient4274" />
+  </defs>
+  <g transform="translate(0,-952.36216)" id="layer1">
+    <ellipse ry="43.438583" rx="48.438583" cy="997.36218" cx="50"
+       style="fill:url(#radialGradient4282);fill-opacity:1;stroke:#000000;stroke-width:3.1228323;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <circle r="10" cy="977.76221" cx="56.000195"
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <circle r="10" id="circle4180" cx="83" cy="989.76208" 
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path d="m 10.6,980.27686 -0.6,13.39123 9.4,-5.54123 -12.6,22.85744 6.6,9.2353 7.8,-25.16622 0.4,33.70882 9.4,-0.6926 -2.4,-32.09269 9.8,12.69849 6.4,-6.2338 -13.8,-16.16179 10,4.84852 0,-23.54999 -11.6,9.92794 -0.4,-11.54412 -9.4,1.38529 1,12.69853 z"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path d="m 52.2,990.9622 c 0,0 -14.775525,33.4882 -1.8,36.9401 9.734611,2.5897 13.2,-8.3587 13.2,-8.3587 0,0 5.750453,17.0315 13.6,9.9765 8.4,-7.5498 6.4,-20.762 6.4,-20.762 l -5,2.4268 c 0,0 0.194698,5.5724 -4.6,7.5498 -5.373591,1.8529 -4,-9.4373 -4,-9.4373 l -7,0.2697 c 0,0 -2.8,8.089 -7.2,6.7408 -4.4,-1.3481 7.8,-21.71736 7.8,-21.71736 z"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <circle r="3.3333333" cx="61.066868" cy="973.22888"
+       style="fill:#f0f0f0;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <circle r="3.3333333" cy="985.22882" cx="88.066689"
+       style="fill:#f0f0f0;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <ellipse ry="2.3999999" rx="5.1000004" cy="985.76221" cx="48.099998"
+       style="fill:#ffc0ff;fill-opacity:1;stroke:none;stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <ellipse cx="88.5" cy="1000.1622" rx="5.1000004" ry="2.3999999"
+       style="fill:#ffc0ff;fill-opacity:1;stroke:none;stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <circle r="10.86843" cy="1039.8622" cx="12.5"
+       style="fill:url(#radialGradient4298);fill-opacity:1;stroke:#000000;stroke-width:3.26314044;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <circle cx="87.5" cy="1039.8622" r="10.86843"
+       style="fill:url(#radialGradient4290);fill-opacity:1;stroke:#000000;stroke-width:3.26314044;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  </g>
+</svg>

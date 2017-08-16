@@ -163,7 +163,6 @@ byre.push(...[
   { tag: true, re: /(<a\s[^>]*>)(.*?:don:.*?)<\/a>/mg, fmt: (all, tag, text) =>
     tag + text.replace(/:don:/g, hesc(':don:')) + '</a>',
   },
-  { re: /:don:/g, fmt: '<a href="https://mstdn.maud.io/">:don:</a>' },
   { order: 'post', re: /[■-◿〽]/ug, fmt: c => `&#${c.codePointAt(0)};` },
 ]);
 
@@ -226,13 +225,22 @@ const shortname_match = (list, remtest, replacer) => apply_without_tag(cur => {
 // :tag: をフツーにimgで返すやつ
 const shorttab = {};
 [
-  'rmn_e',
+  'rmn_e', 'matsu',
 ].forEach(name => {
   shorttab[name] = {
     path: name => shorttab[name].asset,
     asset: require(`../../images/v6don/${name}.svg`),
   };
 });
+[
+  'poyo',
+].forEach(name => {
+  shorttab[name] = {
+    path: name => shorttab[name].asset,
+    asset: require(`../../images/v6don/${name}.png`),
+  };
+});
+
 // 回転対応絵文字
 [
   'nicoru', 'iine', 'irane', 'mayo',
@@ -257,12 +265,19 @@ for (name in proprietary_image) {
   };
 }
 
+// <object>が必要なSVG
 shorttab.biwako = {
   remtest: rem => /^-[gyorpw]$/.test(rem),
   append: (img, name, rem) =>
     rem ? `<object class='emojione' data='${shorttab.biwako.asset}#${rem[1]}' title=':biwako-${rem[1]}:'>:biwako-${rem[1]}:</object>` : img,
   path: () => shorttab.biwako.asset,
   asset: require('../../images/v6don/biwako.svg'),
+};
+
+// リンク
+shorttab.don = {
+	path: () => '',
+	append: () => `<a href="https://mstdn.maud.io/">${hesc(':don:')}</a>`,
 };
 
 trlist.rec.push(shortname_match(
