@@ -152,10 +152,11 @@ byre.push({
 });
 
 byre.push(...[
-  { re: /5,?000\s?兆円/g, img: require('../../images/v6don/5000tyoen.svg') },
-  { re: /5,?000兆/g, img: require('../../images/v6don/5000tyo.svg') },
+  { re: /5,?000\s?兆円/g, img: require('../../images/v6don/5000tyoen.svg'), h: 1.8 },
+  { re: /5,?000兆/g, img: require('../../images/v6don/5000tyo.svg'), h: 1.8 },
+  { re: /熱盛/g, img: require('../../images/v6don/atumori.png'), h: 2 },
 ].map(e => {
-  e.fmt = (m) => `<img alt="${hesc(m)}" src="${e.img}"/>`;
+  e.fmt = (m) => `<img alt="${hesc(m)}" src="${e.img}" style="height: ${e.h}em;"/>`;
   return e;
 }));
 
