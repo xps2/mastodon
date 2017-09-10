@@ -1,5 +1,23 @@
 import loadPolyfills from '../mastodon/load_polyfills';
+import ready from '../mastodon/ready';
+
 import localQuote from '../mastodon/v6don/quote';
+
+window.addEventListener('message', e => {
+  const data = e.data || {};
+
+  if (!window.parent || data.type !== 'setHeight') {
+    return;
+  }
+
+  ready(() => {
+    window.parent.postMessage({
+      type: 'setHeight',
+      id: data.id,
+      height: document.getElementsByTagName('html')[0].scrollHeight,
+    }, '*');
+  });
+});
 
 function main() {
   const { length } = require('stringz');
@@ -7,13 +25,13 @@ function main() {
   const { delegate } = require('rails-ujs');
   const emojify = require('../mastodon/emoji').default;
   const { getLocale } = require('../mastodon/locales');
-  const ready = require('../mastodon/ready').default;
-
   const { localeData } = getLocale();
+
   localeData.forEach(IntlRelativeFormat.__addLocaleData);
 
   ready(() => {
     const locale = document.documentElement.lang;
+
     const dateTimeFormat = new Intl.DateTimeFormat(locale, {
       year: 'numeric',
       month: 'long',
@@ -21,6 +39,7 @@ function main() {
       hour: 'numeric',
       minute: 'numeric',
     });
+
     const relativeFormat = new IntlRelativeFormat(locale);
 
     [].forEach.call(document.querySelectorAll('.e-content'), (content) => {
@@ -34,12 +53,14 @@ function main() {
     [].forEach.call(document.querySelectorAll('time.formatted'), (content) => {
       const datetime = new Date(content.getAttribute('datetime'));
       const formattedDate = dateTimeFormat.format(datetime);
+
       content.title = formattedDate;
       content.textContent = formattedDate;
     });
 
     [].forEach.call(document.querySelectorAll('time.time-ago'), (content) => {
       const datetime = new Date(content.getAttribute('datetime'));
+
       content.title = dateTimeFormat.format(datetime);
       content.textContent = relativeFormat.format(datetime);
     });
@@ -50,10 +71,6 @@ function main() {
         window.open(e.target.href, 'mastodon-intent', 'width=400,height=400,resizable=no,menubar=no,status=no,scrollbars=yes');
       });
     });
-
-    if (window.parent) {
-      window.parent.postMessage(['setHeight', document.getElementsByTagName('html')[0].scrollHeight], '*');
-    }
   });
 
   delegate(document, '.video-player video', 'click', ({ target }) => {
@@ -82,6 +99,7 @@ function main() {
 
   delegate(document, '.status__content__spoiler-link', 'click', ({ target }) => {
     const contentEl = target.parentNode.parentNode.querySelector('.e-content');
+
     if (contentEl.style.display === 'block') {
       contentEl.style.display = 'none';
       target.parentNode.style.marginBottom = 0;
@@ -89,11 +107,13 @@ function main() {
       contentEl.style.display = 'block';
       target.parentNode.style.marginBottom = null;
     }
+
     return false;
   });
 
   delegate(document, '.account_display_name', 'input', ({ target }) => {
     const nameCounter = document.querySelector('.name-counter');
+
     if (nameCounter) {
       nameCounter.textContent = 30 - length(target.value);
     }
@@ -101,6 +121,7 @@ function main() {
 
   delegate(document, '.account_note', 'input', ({ target }) => {
     const noteCounter = document.querySelector('.note-counter');
+
     if (noteCounter) {
       noteCounter.textContent = 160 - length(target.value);
     }
@@ -110,6 +131,7 @@ function main() {
     const avatar = document.querySelector('.card.compact .avatar img');
     const [file] = target.files || [];
     const url = URL.createObjectURL(file);
+
     avatar.src = url;
   });
 
@@ -117,6 +139,7 @@ function main() {
     const header = document.querySelector('.card.compact');
     const [file] = target.files || [];
     const url = URL.createObjectURL(file);
+
     header.style.backgroundImage = `url(${url})`;
   });
 }
