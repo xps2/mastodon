@@ -103,9 +103,9 @@ byre.push({
 
 byre.push({
   order: 'pre',
-  re: /((✨+)( ?IPv6[^✨]*))(✨+)/u,
+  re: /(((?:✨[\ufe0e\ufe0f]?)+)( ?IPv6[^✨]*))((?:✨[\ufe0e\ufe0f]?)+)/u,
   fmt: (m, skip, s1, ip, s2) => {
-    let f = k => k.replace(/./ug, '<span class="v6don-kira">✨</span>');
+    let f = k => k.replace(/✨/g, '<span class="v6don-kira">✨</span>');
 
     let ipdeco = '';
     ip = highlight(ip);
