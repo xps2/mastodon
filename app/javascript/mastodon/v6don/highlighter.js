@@ -164,6 +164,9 @@ byre.push(...[
   { tag: true, re: /(<a\s[^>]*>)(.*?:don:.*?)<\/a>/mg, fmt: (all, tag, text) =>
     tag + text.replace(/:don:/g, hesc(':don:')) + '</a>',
   },
+  { order: 'post', tag: true, re: /(<(?:p|br\s?\/?)>)((\(?)※.*?(\)?))<\/p>/mg, fmt: (all, br, text, po, pc) =>
+    /<br\s?\/?>/.test(text) || (po && !pc || !po && pc) ? all : `${/br/.test(br) ? br : ''}<span style="font-size: 0.55em">${text}</span></p>`,
+  },
   { order: 'post', re: /[■-◿〽]/ug, fmt: c => `&#${c.codePointAt(0)};` },
 ]);
 
@@ -277,8 +280,8 @@ shorttab.biwako = {
 
 // リンク
 shorttab.don = {
-	path: () => '',
-	append: () => `<a href="https://mstdn.maud.io/">${hesc(':don:')}</a>`,
+  path: () => '',
+  append: () => `<a href="https://mstdn.maud.io/">${hesc(':don:')}</a>`,
 };
 
 trlist.rec.push(shortname_match(
