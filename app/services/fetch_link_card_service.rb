@@ -1,15 +1,9 @@
 # frozen_string_literal: true
 
 class FetchLinkCardService < BaseService
-  URL_PATTERN = %r{
-    (                                                                                                 #   $1 URL
-      (https?:\/\/)?                                                                                  #   $2 Protocol (optional)
-      (#{Twitter::Regex[:valid_domain]})                                                              #   $3 Domain(s)
-      (?::(#{Twitter::Regex[:valid_port_number]}))?                                                   #   $4 Port number (optional)
-      (/#{Twitter::Regex[:valid_url_path]}*)?                                                         #   $5 URL Path and anchor
-      (\?#{Twitter::Regex[:valid_url_query_chars]}*#{Twitter::Regex[:valid_url_query_ending_chars]})? #   $6 Query String
-    )
-  }iox
+  include ActionView::Helpers::TagHelper
+
+  URL_PATTERN = %r{https?://\S+}
 
   def call(status)
     @status = status
@@ -48,7 +42,7 @@ class FetchLinkCardService < BaseService
 
   def parse_urls
     if @status.local?
-      urls = @status.text.scan(URL_PATTERN).map { |array| Addressable::URI.parse(array[0]).normalize }
+      urls = @status.text.match(URL_PATTERN).to_a.map { |uri| Addressable::URI.parse(uri).normalize }
     else
       html  = Nokogiri::HTML(@status.text)
       links = html.css('a')
