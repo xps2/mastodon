@@ -71,9 +71,10 @@ trlist.pre.push(apply_without_tag(s => {
     let rr = /(\^H)+/i.exec(s);
     if (!rr) break;
     let delend = rr.index;
-    if (!delend) {
+    if (!delend || /\s/.test(s[delend - 1])) {
+      rtn += s.slice(0, delend);
       rtn += rr[0];
-      s = s.slice(rr[0].length);
+      s = s.slice(delend + rr[0].length);
       continue;
     }
     let dellen = rr[0].length / 2;
