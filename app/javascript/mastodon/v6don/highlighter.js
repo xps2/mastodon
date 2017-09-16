@@ -49,7 +49,17 @@ const apply_without_tag = f => str => {
       rtn += str ? f(str) : '';
       break;
     }
-    rtn += tagbegin ? f(str.slice(0, tagbegin)) : '';
+    else if (tagbegin) {
+      // < に到達する前に > に遭遇する場合に備える
+      let gt;
+      while ((gt = str.indexOf('>')) < tagbegin && gt >= 0) {
+        rtn += gt ? f(str.slice(0, gt)) + '>' : '';
+        str = str.slice(gt + 1);
+        tagbegin -= gt + 1;
+      }
+      rtn += tagbegin ? f(str.slice(0, tagbegin)) : '';
+    }
+
     let tagend = str.indexOf('>', tagbegin + 1) + 1;
     if (!tagend) {
       rtn += str.slice(tagbegin);
