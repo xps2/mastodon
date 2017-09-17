@@ -2562,18 +2562,26 @@ button.icon-button.active i.fa-retweet {
       .emoji {
         width: 18px;
         height: 18px;
+        
+        > svg {
+          width: 18px;
+          height: 18px;
+          filter: grayscale(100%);
+        }
+        
+        &:hover > svg, &:active > svg {
+          filter: grayscale(0);
+        }
       }
 
-      img,
-      svg {
+      img {
         width: 18px;
         height: 18px;
         filter: grayscale(100%);
       }
 
       &:hover {
-        img,
-        svg {
+        img {
           filter: grayscale(0);
         }
       }
@@ -2581,8 +2589,7 @@ button.icon-button.active i.fa-retweet {
       &.active {
         border-bottom-color: $ui-highlight-color;
 
-        img,
-        svg {
+        img {
           filter: grayscale(0);
         }
       }
@@ -2832,7 +2839,7 @@ button.icon-button.active i.fa-retweet {
     outline: 0 !important;
   }
 
-  svg {
+  > svg {
     filter: grayscale(100%);
     opacity: 0.8;
     display: block;
@@ -2845,14 +2852,14 @@ button.icon-button.active i.fa-retweet {
   &:hover,
   &:active,
   &:focus {
-    svg {
+    > svg {
       opacity: 1;
       filter: none;
     }
   }
 }
 
-.dropdown--active .emoji-button svg {
+.dropdown--active .emoji-button > svg {
   opacity: 1;
   filter: none;
 }
