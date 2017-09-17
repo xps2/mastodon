@@ -239,20 +239,22 @@ const shortname_match = (list, remtest, replacer) => apply_without_tag(cur => {
 
 // :tag: をフツーにimgで返すやつ
 const shorttab = {};
+
+const shorttab_replacer_normal = match => `<img class="emojione" alt=":${match}:" title=":${match}:" src="${shorttab[match].asset}" />`;
 [
   'rmn_e', 'matsu',
 ].forEach(name => {
   shorttab[name] = {
-    path: name => shorttab[name].asset,
     asset: require(`../../images/v6don/${name}.svg`),
+    replacer: shorttab_replacer_normal,
   };
 });
 [
   'poyo',
 ].forEach(name => {
   shorttab[name] = {
-    path: name => shorttab[name].asset,
     asset: require(`../../images/v6don/${name}.png`),
+    replacer: shorttab_replacer_normal,
   };
 });
 
@@ -262,9 +264,12 @@ const shorttab = {};
 ].forEach(name => {
   shorttab[name] = {
     remtest: (rem) => /^\d+$/.test(rem),
-    append: (img, name, rem) => rem ? img.replace('/>', ` style="transform: rotate(${rem}deg)"/>`) : img,
-    path: name => shorttab[name].asset,
     asset: require(`../../images/v6don/${name}.svg`),
+    replacer: (match, rem) => {
+      const alt = match + (rem || '');
+      const style = rem ? `style="transform: rotate(${rem}deg)"` : '';
+      return `<img class="emojione" alt=":${alt}:" title=":${alt}:" src="${shorttab[match].asset}" ${style}/>`;
+    },
   };
 });
 
@@ -275,38 +280,30 @@ const proprietary_image = {
 };
 for (name in proprietary_image) {
   shorttab[name] = {
-    path: name => `/emoji/proprietary/${name}.svg`,
-    append: proprietary_image[name].ratio ? (img, name) => img.replace('/>', ` style="width: ${proprietary_image[name].ratio}em"/>`) : null,
+    replacer: name => `<img class="emojione" alt=":${name}:" title=":${name}:" src="/emoji/proprietary/${name}.svg" style="width: ${proprietary_image[name].ratio}em"/>`
   };
 }
 
 // <object>が必要なSVG
 shorttab.biwako = {
   remtest: rem => /^-[gyorpw]$/.test(rem),
-  append: (img, name, rem) =>
-    rem ? `<object class='emojione' data='${shorttab.biwako.asset}#${rem[1]}' title=':biwako-${rem[1]}:'>:biwako-${rem[1]}:</object>` : img,
-  path: () => shorttab.biwako.asset,
   asset: require('../../images/v6don/biwako.svg'),
+  replacer: (match, rem) => {
+    const alt = `:biwako${rem || ''}:`;
+    const path = shorttab.biwako.asset + (rem ? `#${rem[1]}` : '');
+    return `<object class='emojione' data='${path}' title='${alt}'>${alt}</object>`;
+  },
 };
 
 // リンク
 shorttab.don = {
-  path: () => '',
-  append: () => `<a href="https://mstdn.maud.io/">${hesc(':don:')}</a>`,
+  replacer: () => `<a href="https://mstdn.maud.io/">${hesc(':don:')}</a>`,
 };
 
 trlist.rec.push(shortname_match(
   Object.keys(shorttab),
   (match, rem) => shorttab[match].remtest && shorttab[match].remtest(rem),
-  (match, rem) => {
-    let name = match + (rem || '');
-    let rtn = `<img class="emojione" alt=":${name}:" title=":${name}:" src="${shorttab[match].path(match, rem)}" />`;
-    if (shorttab[match].append) {
-      rtn = shorttab[match].append(rtn, match, rem) || rtn;
-    }
-    return rtn;
-  })
-);
+  (match, rem) => shorttab[match].replacer(match, rem)));
 
 // :tag: の単色SVG版
 const monosvg = {};
