@@ -36,37 +36,33 @@ const ununesc = str => str.replace(/[&<>]/g, e => ({ '&': '&amp;', '<': '&lt;', 
 
 const apply_without_tag = f => str => {
   let rtn = '';
+  const origstr = str;
+  let brokentag;
   while (str) {
     let tagbegin = str.indexOf('<');
-    if (tagbegin === -1) {
-      // rtn += f(str);
-      // break;
-      // spec を通すため片割れの ">" の判別
-      while ((tagbegin = str.indexOf('>')) !== -1) {
-        rtn += (tagbegin ? f(str.slice(0, tagbegin)) : '') + '>';
-        str = str.slice(tagbegin + 1);
-      }
-      rtn += str ? f(str) : '';
-      break;
-    } else if (tagbegin) {
-      // < に到達する前に > に遭遇する場合に備える
-      let gt;
-      while ((gt = str.indexOf('>')) < tagbegin && gt >= 0) {
-        rtn += gt ? f(str.slice(0, gt)) + '>' : '';
-        str = str.slice(gt + 1);
-        tagbegin -= gt + 1;
-      }
-      rtn += tagbegin ? f(str.slice(0, tagbegin)) : '';
+    const notag = tagbegin === -1;
+    if (notag) {
+      tagbegin = str.length;
     }
+    // < か末尾に到達する前に > に遭遇する場合に備える
+    for (let gt; (gt = str.indexOf('>')) !== -1 && gt < tagbegin; tagbegin -= gt + 1) {
+      rtn += (gt ? f(str.slice(0, gt)) : '') + '>';
+      str = str.slice(gt + 1);
+      brokentag = true;
+    }
+    rtn += tagbegin ? f(str.slice(0, tagbegin)) : '';
+    if (notag) break;
 
     let tagend = str.indexOf('>', tagbegin + 1) + 1;
     if (!tagend) {
+      brokentag = true;
       rtn += str.slice(tagbegin);
       break;
     }
     rtn += str.slice(tagbegin, tagend);
     str = str.slice(tagend);
   }
+  if (brokentag) console.warn('highlight()に渡された文字列のタグの対応がおかしい → ', origstr);
   return rtn;
 };
 
