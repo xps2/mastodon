@@ -48,8 +48,7 @@ const apply_without_tag = f => str => {
       }
       rtn += str ? f(str) : '';
       break;
-    }
-    else if (tagbegin) {
+    } else if (tagbegin) {
       // < に到達する前に > に遭遇する場合に備える
       let gt;
       while ((gt = str.indexOf('>')) < tagbegin && gt >= 0) {
@@ -205,41 +204,9 @@ byre.forEach(e => {
 });
 
 // :tag:の置換
-
-// 共通処理
-const shortname_match = (list, remtest, replacer) => apply_without_tag(cur => {
-  let prev = '';
-  let trie = new Trie(list);
-  for (;;) {
-    let tagbegin = cur.indexOf(':') + 1;
-    if (!tagbegin) break;
-    let tagend = cur.indexOf(':', tagbegin);
-    if (tagend === -1) break;
-    let tag = cur.slice(tagbegin, tagend);
-    let match = trie.search(tag);
-    let replace = false, rem = null;
-    if (match) {
-      if (tag === match) {
-        replace = true;
-      } else {
-        rem = tag.slice(match.length);
-        replace = remtest && remtest(match, rem);
-      }
-    }
-    if (replace) {
-      prev += cur.slice(0, tagbegin - 1) + replacer(match, rem);
-      cur = cur.slice(tagend + 1);
-    } else {
-      prev += cur.slice(0, tagend);
-      cur = cur.slice(tagend);
-    }
-  }
-  return prev + cur;
-});
-
-// :tag: をフツーにimgで返すやつ
 const shorttab = {};
 
+// :tag: をフツーにimgで返すやつ
 const shorttab_replacer_normal = match => `<img class="emojione" alt=":${match}:" title=":${match}:" src="${shorttab[match].asset}" />`;
 [
   'rmn_e', 'matsu',
@@ -280,7 +247,7 @@ const proprietary_image = {
 };
 for (name in proprietary_image) {
   shorttab[name] = {
-    replacer: name => `<img class="emojione" alt=":${name}:" title=":${name}:" src="/emoji/proprietary/${name}.svg" style="width: ${proprietary_image[name].ratio}em"/>`
+    replacer: name => `<img class="emojione" alt=":${name}:" title=":${name}:" src="/emoji/proprietary/${name}.svg" style="width: ${proprietary_image[name].ratio}em"/>`,
   };
 }
 
@@ -300,41 +267,27 @@ shorttab.don = {
   replacer: () => `<a href="https://mstdn.maud.io/">${hesc(':don:')}</a>`,
 };
 
-trlist.rec.push(shortname_match(
-  Object.keys(shorttab),
-  (match, rem) => shorttab[match].remtest && shorttab[match].remtest(rem),
-  (match, rem) => shorttab[match].replacer(match, rem)));
-
 // :tag: の単色SVG版
-const monosvg = {};
-['hiki', 'hohoemi', 'lab', 'tama', 'tree'].forEach(name => {
-  monosvg[name] = {
-    text: null,
-    loading: false,
-    asset: require(`../../images/v6don/${name}.svg`),
-  };
-});
+const monosvg_replacer = name => {
+  if (shorttab[name].text) return shorttab[name].text;
 
-trlist.rec.push(shortname_match(Object.keys(monosvg), null, (name) => {
-  if (monosvg[name].text) return monosvg[name].text;
-
-  if (!monosvg[name].loading) {
+  if (!shorttab[name].loading) {
     // SVGを読みに行く
-    monosvg[name].loading = true;
+    shorttab[name].loading = true;
     // 取得処理
-    fetch(monosvg[name].asset).then(res => {
+    fetch(shorttab[name].asset).then(res => {
       let escname = hesc(name);
       if (res.ok) {
         res.text().then(txt => {
           // 読み込めた時、以後はこのSVGテキストをそのまま使う
-          monosvg[name].text = txt.replace(
+          shorttab[name].text = txt.replace(
             /<style[\s\S]*?<\/style>/m, ''
           ).replace(
             />/, ` class="emojione v6don-monosvg"><g><title>:${escname}:</title><desc>:${escname}:</desc>`
           ).replace(/<\/svg>/, '</g></svg>').replace(/\n/mg, ' ').trim();
           // 仮置きしたspanをDOMで置換
           let dp = new DOMParser();
-          let svg = dp.parseFromString(monosvg[name].text, 'application/xml').documentElement;
+          let svg = dp.parseFromString(shorttab[name].text, 'application/xml').documentElement;
           let replace = (name) => {
             [].forEach.call(document.body.getElementsByClassName(`monosvg-replacee-${name}`) || [], e => {
               e.parentNode.replaceChild(svg.cloneNode(true), e);
@@ -346,10 +299,51 @@ trlist.rec.push(shortname_match(Object.keys(monosvg), null, (name) => {
         });
       } else {
         // 読み込めなかった時は再取得を促す
-        monosvg[name].loading = false;
+        shorttab[name].loading = false;
       }
     });
   }
   // SVG取得まで仮置き
   return `<span class="monosvg-replacee-${name}">:${hesc(name)}:</span>`;
+};
+[
+  'hiki', 'hohoemi', 'lab', 'tama', 'tree',
+].forEach(name => {
+  shorttab[name] = {
+    text: null,
+    loading: false,
+    asset: require(`../../images/v6don/${name}.svg`),
+    replacer: monosvg_replacer,
+  };
+});
+
+// :tag:置換まとめ
+const shorttab_trie = new Trie(Object.keys(shorttab));
+trlist.rec.push(apply_without_tag(cur => {
+  let prev = '';
+  for (;;) {
+    let tagbegin = cur.indexOf(':') + 1;
+    if (!tagbegin) break;
+    let tagend = cur.indexOf(':', tagbegin);
+    if (tagend === -1) break;
+    let tag = cur.slice(tagbegin, tagend);
+    let match = shorttab_trie.search(tag);
+    let replace = false, rem = null;
+    if (match) {
+      if (tag === match) {
+        replace = true;
+      } else {
+        rem = tag.slice(match.length);
+        replace = shorttab[match].remtest && shorttab[match].remtest(rem);
+      }
+    }
+    if (replace) {
+      prev += cur.slice(0, tagbegin - 1) + shorttab[match].replacer(match, rem);
+      cur = cur.slice(tagend + 1);
+    } else {
+      prev += cur.slice(0, tagend);
+      cur = cur.slice(tagend);
+    }
+  }
+  return prev + cur;
 }));
