@@ -254,7 +254,7 @@ shorttab.biwako = {
   replacer: (match, rem) => {
     const alt = `:biwako${rem || ''}:`;
     const path = shorttab.biwako.asset + (rem ? `#${rem[1]}` : '');
-    return `<object class='emojione' data='${path}' title='${alt}'>${alt}</object>`;
+    return `<object class='emojione' data='${path}' title='${alt}'>${hesc(alt)}</object>`;
   },
 };
 
@@ -272,14 +272,14 @@ const monosvg_replacer = name => {
     shorttab[name].loading = true;
     // 取得処理
     fetch(shorttab[name].asset).then(res => {
-      let escname = hesc(name);
+      let escname = hesc(`:${name}:`);
       if (res.ok) {
         res.text().then(txt => {
           // 読み込めた時、以後はこのSVGテキストをそのまま使う
           shorttab[name].text = txt.replace(
             /<style[\s\S]*?<\/style>/m, ''
           ).replace(
-            />/, ` class="emojione v6don-monosvg"><g><title>:${escname}:</title><desc>:${escname}:</desc>`
+            />/, ` class="emojione v6don-monosvg"><g><title>${escname}</title><desc>${escname}</desc>`
           ).replace(/<\/svg>/, '</g></svg>').replace(/\n/mg, ' ').trim();
           // 仮置きしたspanをDOMで置換
           let dp = new DOMParser();
@@ -300,7 +300,7 @@ const monosvg_replacer = name => {
     });
   }
   // SVG取得まで仮置き
-  return `<span class="monosvg-replacee-${name}">:${hesc(name)}:</span>`;
+  return `<span class="monosvg-replacee-${name}">${hesc(`:${name}:`)}</span>`;
 };
 [
   'hiki', 'hohoemi', 'lab', 'tama', 'tree',
