@@ -32,7 +32,7 @@ ja:
         error: フォームにエラーが無いか確認してください。
       help:
         native_redirect_uri: ローカルテストに %{native_redirect_uri} を使用
-        redirect_uri: 一行に一つのURLを入力してください
+        redirect_uri: 一行に一つのURLを入力してください。
         scopes: アクセス権は半角スペースで区切ることができます。 空白のままにするとデフォルトを使用します。
       index:
         application: アプリ
@@ -68,7 +68,7 @@ ja:
       buttons:
         revoke: 取消
       confirmations:
-        revoke: 本当に取り消しますか？
+        revoke: 本当に取り消しますか?
       index:
         application: アプリ名
         created_at: 許可した日時
