@@ -34,6 +34,18 @@
     transform: translateY(0);
   }
 }
+@keyframes v6don-bitibiti {
+  @for $i from 0 through 14 {
+    #{$i * 2}% {
+      @if $i % 2 == 0 { transform: rotate(-20deg); }
+      @else { transform: rotate(20deg); }
+    }
+  }
+  30% {
+    transform: rotate(0);
+  }
+}
+
 
 .v6don-fg-stroke {
   stroke: $primary-text-color;
@@ -99,6 +111,10 @@
 }
 .v6don-kozinkanso {
   font-size: 0.55em;
+}
+.v6don-bitibiti {
+  display: inline-block;
+  animation: v6don-bitibiti 1.6s infinite;
 }
 
 

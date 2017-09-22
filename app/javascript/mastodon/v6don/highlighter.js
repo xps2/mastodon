@@ -80,7 +80,7 @@ const split_each_emoji = (str, ce) => {
       if (/^<img\s/.test(str)) {
         type = 'image';
         ei = str.indexOf('>') + 1;
-      } else if (rr = /^<(svg|object)[\s>]/.exec(str)) {
+      } else if ((rr = /^<(svg|object)[\s>]/.exec(str))) {
         type = 'image';
         const etag = `</${rr[1]}>`;
         ei = str.indexOf(etag) + etag.length;
@@ -92,7 +92,7 @@ const split_each_emoji = (str, ce) => {
       type = 'char';
       ei = str.codePointAt(0) >= 65536 ? 2 : 1;
     }
-    list.push({type: type, str: str.slice(0, ei)});
+    list.push({ type: type, str: str.slice(0, ei) });
     str = str.slice(ei);
   }
   return list;
@@ -131,7 +131,7 @@ trlist.pre.push(apply_without_tag(s => {
 trlist.pre.push(apply_without_tag((s, ce) => {
   let rtn = '';
   let rr;
-  while(rr = /((?:✨[\ufe0e\ufe0f]?)+)( ?IPv6[^✨]*)((?:✨[\ufe0e\ufe0f]?)+)/u.exec(s)) {
+  while ((rr = /((?:✨[\ufe0e\ufe0f]?)+)( ?IPv6[^✨]*)((?:✨[\ufe0e\ufe0f]?)+)/u.exec(s))) {
     rtn += s.slice(0, rr.index) + rr[1];
     s = s.slice(rr.index + rr[1].length);
     let list = split_each_emoji(rr[2], ce);
@@ -163,6 +163,16 @@ trlist.pre.push(apply_without_tag((s, ce) => {
   }
   return rtn + s;
 }));
+
+// ₍₍🥫⁾⁾
+trlist.pre.push(apply_without_tag((s, ce) => s.replace(/(₍₍|⁽⁽)([^₍₎⁽⁾]+)(₎₎|⁾⁾)/g, (all, left, biti, right) => {
+  const l = left === '⁽⁽' ? 1 : 0;
+  const r = right === '⁾⁾' ? 1 : 0;
+  if (l ^ r === 0) return all;
+  const list = split_each_emoji(biti, ce);
+  if (list.length > 3) return all;
+  return `${left}<span class="v6don-bitibiti">${biti}</span>${right}`;
+})));
 
 // 置換をString.replace()に投げるやつ
 const byre = [];
@@ -196,8 +206,12 @@ byre.push(...[
   { order: 'post', re: /✨/ug, fmt: '<span class="v6don-kira">✨</span>' },
   { order: 'post', re: /えらいっ[!！]*/g, fmt: erai => {
     let delay = 0;
-    return erai.split('').map(c => { c = `<span class="v6don-wave" style="animation-delay: ${delay}ms">${c}</span>`; delay += 100; return c; }).join('');
-  }, },
+    return erai.split('').map(c => {
+      c = `<span class="v6don-wave" style="animation-delay: ${delay}ms">${c}</span>`;
+      delay += 100;
+      return c;
+    }).join('');
+  } },
 ]);
 
 const replace_by_re = (re, fmt) => str => {
