@@ -1,11 +1,12 @@
 import Trie from 'substring-trie';
+import { emojify_original as emojify } from '../emoji';
 
 // ↓の配列に絵文字置換対象の文字列を受け取って置換を施した文字列を返すという
 // 関数を追加していく
 const trlist = { pre: [], rec:[], post: [] };
-const tr = (text, order) => trlist[order].reduce((t, f) => f(t), text);
-const highlight = text => tr(text, 'rec');
-const highlight_root = text => ['pre', 'rec', 'post'].reduce((t, o) => tr(t, o), text);
+const tr = (text, order, ce) => trlist[order].reduce((t, f) => f(t, ce), text);
+const highlight = (text, ce) => tr(text, 'rec', ce);
+const highlight_root = (text, ce) => ['pre', 'rec', 'post'].reduce((t, o) => tr(t, o, ce), text);
 export default highlight_root;
 
 // ユーティリティ
@@ -34,7 +35,7 @@ const unesc = str => {
 
 const ununesc = str => str.replace(/[&<>]/g, e => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[e]);
 
-const apply_without_tag = f => str => {
+const apply_without_tag = f => (str, ce) => {
   let rtn = '';
   const origstr = str;
   let brokentag;
@@ -46,11 +47,11 @@ const apply_without_tag = f => str => {
     }
     // < か末尾に到達する前に > に遭遇する場合に備える
     for (let gt; (gt = str.indexOf('>')) !== -1 && gt < tagbegin; tagbegin -= gt + 1) {
-      rtn += (gt ? f(str.slice(0, gt)) : '') + '>';
+      rtn += (gt ? f(str.slice(0, gt), ce) : '') + '>';
       str = str.slice(gt + 1);
       brokentag = true;
     }
-    rtn += tagbegin ? f(str.slice(0, tagbegin)) : '';
+    rtn += tagbegin ? f(str.slice(0, tagbegin), ce) : '';
     if (notag) break;
 
     let tagend = str.indexOf('>', tagbegin + 1) + 1;
@@ -64,6 +65,37 @@ const apply_without_tag = f => str => {
   }
   if (brokentag) console.warn('highlight()に渡された文字列のタグの対応がおかしい → ', origstr);
   return rtn;
+};
+
+const split_each_emoji = (str, ce) => {
+  const list = [];
+  str = emojify(highlight(str, ce), ce);
+  while (str) {
+    let ei, type;
+    if (str[0] === '&') {
+      type = 'char';
+      ei = str.indexOf(';') + 1;
+    } else if (str[0] === '<') {
+      let rr;
+      if (/^<img\s/.test(str)) {
+        type = 'image';
+        ei = str.indexOf('>') + 1;
+      } else if (rr = /^<(svg|object)[\s>]/.exec(str)) {
+        type = 'image';
+        const etag = `</${rr[1]}>`;
+        ei = str.indexOf(etag) + etag.length;
+      } else if (str.length > 1 && str[1] === '/') {
+        type = str.length > 1 && str[1] === '/' ? 'tagclose' : 'tagopen';
+        ei = str.indexOf('>') + 1;
+      }
+    } else {
+      type = 'char';
+      ei = str.codePointAt(0) >= 65536 ? 2 : 1;
+    }
+    list.push({type: type, str: str.slice(0, ei)});
+    str = str.slice(ei);
+  }
+  return list;
 };
 
 // ここから関数登録
@@ -95,6 +127,43 @@ trlist.pre.push(apply_without_tag(s => {
   return rtn + ununesc(s);
 }));
 
+// ✨IPv6✨
+trlist.pre.push(apply_without_tag((s, ce) => {
+  let rtn = '';
+  let rr;
+  while(rr = /((?:✨[\ufe0e\ufe0f]?)+)( ?IPv6[^✨]*)((?:✨[\ufe0e\ufe0f]?)+)/u.exec(s)) {
+    rtn += s.slice(0, rr.index) + rr[1];
+    s = s.slice(rr.index + rr[1].length);
+    let list = split_each_emoji(rr[2], ce);
+    if (list.length > 11) {
+      rtn += rr[2];
+      s = s.slice(rr[2].length);
+      continue;
+    }
+    let delay = 0;
+    list.forEach(e => {
+      let c;
+      if (/^\s/u.test(e.str)) {
+        c = e.str;
+      } else switch (e.type) {
+      case 'char':
+      case 'image':
+        c = `<span class="v6don-wave" style="animation-delay: ${delay}ms">${e.str}</span>`;
+        delay += 100;
+        break;
+      case 'tagclose':
+      case 'tagopen':
+        c = e.str;
+        break;
+      }
+      rtn += c;
+    });
+    rtn += rr[3];
+    s = s.slice(rr[2].length + rr[3].length);
+  }
+  return rtn + s;
+}));
+
 // 置換をString.replace()に投げるやつ
 const byre = [];
 
@@ -104,56 +173,6 @@ byre.push({
   fmt: (m, skip, d1, txt, d2) => {
     if (d1[0] !== d2[0]) return null;
     return `<span class="v6don-tyu2"><span class="v6don-dagger">${d1}</span>${txt}<span class="v6don-dagger">${d2}</span></span>`;
-  },
-});
-
-byre.push({
-  order: 'pre',
-  re: /(((?:✨[\ufe0e\ufe0f]?)+)( ?IPv6[^✨]*))((?:✨[\ufe0e\ufe0f]?)+)/u,
-  fmt: (m, skip, s1, ip, s2) => {
-    let f = k => k.replace(/✨/g, '<span class="v6don-kira">✨</span>');
-
-    let ipdeco = '';
-    ip = highlight(ip);
-    for (let chars = 0, delay = 0; ip.length && chars < 11; chars++) {
-      let deco = true, decolen;
-      let rr = /^\s/u.exec(ip);
-      if (rr) {
-        deco = false;
-        decolen = rr[0].length;
-      } else if (ip[0] === '&') {
-        rr = /&.*?;/.exec(ip);
-        decolen = rr[0].length;
-      } else if (ip[0] === '<') {
-        if (/^<svg /.test(ip)) {
-          deco = true;
-          // BUG: SVGが入れ子になってると死ぬ
-          decolen = ip.indexOf('</svg>') + '</svg>'.length;
-        } else {
-          deco = /^<img\s/i.test(ip);
-          rr = /<[^>]*?>/.exec(ip);
-          decolen = rr[0].length;
-        }
-      } else if (ip.codePointAt(0) >= 65536) {
-        decolen = 2;
-      } else {
-        decolen = 1;
-      }
-
-      if (deco) {
-        ipdeco += `<span class="v6don-wave" style="animation-delay: ${delay}ms">${ip.slice(0, decolen)}</span>`;
-        delay += 100;
-      } else {
-        ipdeco += ip.slice(0, decolen);
-      }
-      ip = ip.slice(decolen);
-    }
-
-    if (ip.length) {
-      return null;
-    }
-
-    return `${f(s1)}${ipdeco}${f(s2)}`;
   },
 });
 
@@ -174,6 +193,11 @@ byre.push(...[
     /<br\s?\/?>/.test(text) || (po && !pc || !po && pc) ? all : `${/br/.test(br) ? br : ''}<span class="v6don-kozinkanso">${text}</span></p>`,
   },
   { order: 'post', re: /[■-◿〽]/ug, fmt: c => `&#${c.codePointAt(0)};` },
+  { order: 'post', re: /✨/ug, fmt: '<span class="v6don-kira">✨</span>' },
+  { order: 'post', re: /えらいっ[!！]*/g, fmt: erai => {
+    let delay = 0;
+    return erai.split('').map(c => { c = `<span class="v6don-wave" style="animation-delay: ${delay}ms">${c}</span>`; delay += 100; return c; }).join('');
+  }, },
 ]);
 
 const replace_by_re = (re, fmt) => str => {

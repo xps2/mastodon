@@ -49,6 +49,7 @@ const emojify = (str, customEmojis = {}) => {
   return rtn + str;
 };
 
-const emojify_v6don = (text, customEmojis) => emojify(highlight(text), customEmojis);
+const emojify_v6don = (text, customEmojis) => emojify(highlight(text, customEmojis), customEmojis);
 
+export { emojify as emojify_original };
 export default emojify_v6don;
