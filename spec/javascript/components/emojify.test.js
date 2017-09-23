@@ -33,13 +33,13 @@ describe('emojify', () => {
 
   it('does multiple unicode', () => {
     expect(emojify('\u2757 #\uFE0F\u20E3')).to.equal(
-      `${svgintro}:exclamation:</title><desc>❗</desc><use xlink:href="/packs/emojione.sprites.svg#emoji-2757"/></g></svg> ${svgintro}:hash:</title><desc>#️⃣</desc><use xlink:href="/packs/emojione.sprites.svg#emoji-0023-20e3"/></g></svg>`);
+      '<img draggable="false" class="emojione" alt="❗" title=":exclamation:" src="/emoji/2757.svg" /> <img draggable="false" class="emojione" alt="#️⃣" title=":hash:" src="/emoji/23-20e3.svg" />');
     expect(emojify('\u2757#\uFE0F\u20E3')).to.equal(
-      `${svgintro}:exclamation:</title><desc>❗</desc><use xlink:href="/packs/emojione.sprites.svg#emoji-2757"/></g></svg>${svgintro}:hash:</title><desc>#️⃣</desc><use xlink:href="/packs/emojione.sprites.svg#emoji-0023-20e3"/></g></svg>`);
+      '<img draggable="false" class="emojione" alt="❗" title=":exclamation:" src="/emoji/2757.svg" /><img draggable="false" class="emojione" alt="#️⃣" title=":hash:" src="/emoji/23-20e3.svg" />');
     expect(emojify('\u2757 #\uFE0F\u20E3 \u2757')).to.equal(
-      `${svgintro}:exclamation:</title><desc>❗</desc><use xlink:href="/packs/emojione.sprites.svg#emoji-2757"/></g></svg> ${svgintro}:hash:</title><desc>#️⃣</desc><use xlink:href="/packs/emojione.sprites.svg#emoji-0023-20e3"/></g></svg> ${svgintro}:exclamation:</title><desc>❗</desc><use xlink:href="/packs/emojione.sprites.svg#emoji-2757"/></g></svg>`);
+      '<img draggable="false" class="emojione" alt="❗" title=":exclamation:" src="/emoji/2757.svg" /> <img draggable="false" class="emojione" alt="#️⃣" title=":hash:" src="/emoji/23-20e3.svg" /> <img draggable="false" class="emojione" alt="❗" title=":exclamation:" src="/emoji/2757.svg" />');
     expect(emojify('foo \u2757 #\uFE0F\u20E3 bar')).to.equal(
-      `foo ${svgintro}:exclamation:</title><desc>❗</desc><use xlink:href="/packs/emojione.sprites.svg#emoji-2757"/></g></svg> ${svgintro}:hash:</title><desc>#️⃣</desc><use xlink:href="/packs/emojione.sprites.svg#emoji-0023-20e3"/></g></svg> bar`);
+      'foo <img draggable="false" class="emojione" alt="❗" title=":exclamation:" src="/emoji/2757.svg" /> <img draggable="false" class="emojione" alt="#️⃣" title=":hash:" src="/emoji/23-20e3.svg" /> bar');
   });
 
   it('ignores unicode inside of tags', () => {

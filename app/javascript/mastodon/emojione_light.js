@@ -15,5 +15,5 @@ excluded.forEach(c => {
 });
 module.exports.unicodeMapping = keys
   .map(unicodeStr => [unicodeStr, mappedUnicode[emojione.jsEscapeMap[unicodeStr]]])
-  .map(([unicodeStr, shortCode]) => ({ [unicodeStr]: [emojione.emojioneList[shortCode].fname, shortCode.slice(1, shortCode.length - 1)] }))
+  .map(([unicodeStr, shortCode]) => ({ [unicodeStr]: [emojione.emojioneList[shortCode].fname.replace(/^0+/g, ''), shortCode.slice(1, shortCode.length - 1)] }))
   .reduce((x, y) => Object.assign(x, y), { });
