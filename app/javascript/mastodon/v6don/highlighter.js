@@ -305,53 +305,16 @@ shorttab.don = {
   replacer: () => `<a href="https://mstdn.maud.io/">${hesc(':don:')}</a>`,
 };
 
-// :tag: の単色SVG版
-const monosvg_replacer = name => {
-  if (shorttab[name].text) return shorttab[name].text;
-
-  if (!shorttab[name].loading) {
-    // SVGを読みに行く
-    shorttab[name].loading = true;
-    // 取得処理
-    fetch(shorttab[name].asset).then(res => {
-      let escname = hesc(`:${name}:`);
-      if (res.ok) {
-        res.text().then(txt => {
-          // 読み込めた時、以後はこのSVGテキストをそのまま使う
-          shorttab[name].text = txt.replace(
-            /<style[\s\S]*?<\/style>/m, ''
-          ).replace(
-            />/, ` class="emojione v6don-monosvg"><g><title>${escname}</title><desc>${escname}</desc>`
-          ).replace(/<\/svg>/, '</g></svg>').replace(/\n/mg, ' ').trim();
-          // 仮置きしたspanをDOMで置換
-          let dp = new DOMParser();
-          let svg = dp.parseFromString(shorttab[name].text, 'application/xml').documentElement;
-          let replace = (name) => {
-            [].forEach.call(document.body.getElementsByClassName(`monosvg-replacee-${name}`) || [], e => {
-              e.parentNode.replaceChild(svg.cloneNode(true), e);
-            });
-          };
-          replace(name);
-          // 不安なのでもう1回する(謎)
-          //setTimeout(replace, 1500, name);
-        });
-      } else {
-        // 読み込めなかった時は再取得を促す
-        shorttab[name].loading = false;
-      }
-    });
-  }
-  // SVG取得まで仮置き
-  return `<span class="monosvg-replacee-${name}">${hesc(`:${name}:`)}</span>`;
-};
+// 単色絵文字
 [
-  'hiki', 'hohoemi', 'lab', 'tama', 'tree',
-].forEach(name => {
-  shorttab[name] = {
-    text: null,
-    loading: false,
-    asset: require(`../../images/v6don/${name}.svg`),
-    replacer: monosvg_replacer,
+  { name: 'hohoemi', char: '\u{f0000}' },
+  { name: 'hiki', char: '\u{f0001}' },
+  { name: 'lab', char: '\u{f0002}' },
+  { name: 'tama', char: '\u{f0003}' },
+  { name: 'tree', char: '\u{f0004}' },
+].forEach(e => {
+  shorttab[e.name] = {
+    replacer: () => `<span class="v6don-emoji" data-gryph="${e.char}"></span><span class="invisible">&#58;${e.name}&#58;</span>`,
   };
 });
 

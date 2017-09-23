@@ -46,6 +46,10 @@
   }
 }
 
+@font-face {
+  font-family: 'v6don-emoji';
+  src: url('../fonts/v6don/v6don-emoji.woff') format('woff');
+}
 
 .v6don-fg-stroke {
   stroke: $primary-text-color;
@@ -116,7 +120,10 @@
   display: inline-block;
   animation: v6don-bitibiti 1.6s infinite;
 }
-
+.v6don-emoji::before {
+  font-family: 'v6don-emoji';
+  content: attr(data-gryph);
+}
 
 $quoted-text-color: #0e7f28;
 
