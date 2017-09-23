@@ -212,6 +212,7 @@ byre.push(...[
       return c;
     }).join('');
   } },
+  { order: 'post', re: /🤮/ug, fmt: '<img class="emojione" alt="🤮" title=":puke:" src="/emoji/proprietary/puke.png"/>' },
 ]);
 
 const replace_by_re = (re, fmt) => str => {
@@ -276,12 +277,15 @@ const shorttab_replacer_normal = match => `<img class="emojione" alt=":${match}:
 
 // 不自由なロゴ達
 const proprietary_image = {
-  realtek: { ratio: 4.92 },
-  sega: { ratio:  3.29 },
+  realtek: { ratio: 4.92, ext: 'svg' },
+  sega: { ratio: 3.29, ext: 'svg' },
+  puke: { ext: 'png' },
 };
 for (name in proprietary_image) {
   shorttab[name] = {
-    replacer: name => `<img class="emojione" alt=":${name}:" title=":${name}:" src="/emoji/proprietary/${name}.svg" style="width: ${proprietary_image[name].ratio}em"/>`,
+    replacer: name => `<img class="emojione" alt=":${name}:" title=":${name}:" src="/emoji/proprietary/${name}.${proprietary_image[name].ext}" ${
+      proprietary_image[name].ratio ? `style="width: ${proprietary_image[name].ratio}em;"` : ''
+    }/>`,
   };
 }
 
