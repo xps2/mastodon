@@ -189,7 +189,6 @@ byre.push({
 byre.push(...[
   { re: /5,?000\s?兆円/g, img: require('../../images/v6don/5000tyoen.svg'), h: 1.8 },
   { re: /5,?000兆/g, img: require('../../images/v6don/5000tyo.svg'), h: 1.8 },
-  { re: /熱盛/g, img: require('../../images/v6don/atumori.png'), h: 2 },
 ].map(e => {
   e.fmt = (m) => `<img alt="${hesc(m)}" src="${e.img}" style="height: ${e.h}em;"/>`;
   return e;
@@ -197,13 +196,11 @@ byre.push(...[
 
 byre.push(...[
   { tag: true, re: /(<a\s[^>]*>)(.*?:don:.*?)<\/a>/mg, fmt: (all, tag, text) =>
-    tag + text.replace(/:don:/g, hesc(':don:')) + '</a>',
+    tag + text.replace(/:don:/g, '&#58;don&#58;') + '</a>',
   },
   { order: 'post', tag: true, re: /(<(?:p|br\s?\/?)>)((\(?)※.*?(\)?))<\/p>/mg, fmt: (all, br, text, po, pc) =>
     /<br\s?\/?>/.test(text) || (po && !pc || !po && pc) ? all : `${/br/.test(br) ? br : ''}<span class="v6don-kozinkanso">${text}</span></p>`,
   },
-  { order: 'pre', re: /[■-◿〽]/ug, fmt: c => `&#${c.codePointAt(0)};` },
-  { order: 'post', re: /✨/ug, fmt: '<span class="v6don-kira">✨</span>' },
   { order: 'post', re: /([えエ][らラ]いっ|erait+)[!！]*/ig, fmt: erai => {
     let delay = 0;
     return erai.split('').map(c => {
@@ -212,7 +209,6 @@ byre.push(...[
       return c;
     }).join('');
   } },
-  { order: 'post', re: /🤮/ug, fmt: '<img class="emojione" alt="🤮" title=":puke:" src="/emoji/proprietary/puke.png"/>' },
   {
     order: 'post', tag: true, re: /<img v6don-emoji:([^:]+):([^>]+)>/g,
     fmt: (all, name, char) => `<span class="v6don-emoji" data-gryph="${char}" title="&#58;${name}&#58;"></span><span class="invisible">&#58;${name}&#58;</span>`,
@@ -240,6 +236,43 @@ const replace_by_re = (re, fmt) => str => {
 
 byre.forEach(e => {
   trlist[e.order || 'rec'].push(e.tag ? replace_by_re(e.re, e.fmt) : apply_without_tag(replace_by_re(e.re, e.fmt)));
+});
+
+// trie
+const bytrie = { pre: {}, rec: {}, post: {} };
+
+bytrie.rec['熱盛'] = `<img alt="熱盛" src="${require('../../images/v6don/atumori.png')}" style="height: 2em;"/>`;
+[
+  { ptn: '✨', fmt: '<span class="v6don-kira">✨</span>' },
+  { ptn: '🤮', fmt: '<img class="emojione" alt="🤮" title=":puke:" src="/emoji/proprietary/puke.png"/>' },
+  { ptn: 'これすき', fmt: '<span class="v6don-koresuki">これすき</span>' },
+].forEach(e => {
+  bytrie.post[e.ptn] = e.fmt;
+});
+void (() => {
+  const f = c => `&#${c.codePointAt(0)};`;
+  for (let c = '■'; c <= '◿'; c++) {
+    bytrie.pre[c] = f;
+  }
+  bytrie.pre['〽'] = f;
+})();
+
+Object.keys(bytrie).forEach(k => {
+  const t = new Trie(Object.keys(bytrie[k]));
+  trlist[k].push(apply_without_tag(str => {
+    let rtn = '', match;
+    while (str) {
+      if ((match = t.search(str))) {
+        rtn += typeof bytrie[k][match] === 'string' ? bytrie[k][match] : bytrie[k][match](match);
+        str = str.slice(match.length);
+      } else {
+        const cl = str.codePointAt(0) < 65536 ? 1 : 2;
+        rtn += str.slice(0, cl);
+        str = str.slice(cl);
+      }
+    }
+    return rtn;
+  }));
 });
 
 // :tag:の置換
