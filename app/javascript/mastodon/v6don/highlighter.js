@@ -204,7 +204,7 @@ byre.push(...[
   },
   { order: 'pre', re: /[■-◿〽]/ug, fmt: c => `&#${c.codePointAt(0)};` },
   { order: 'post', re: /✨/ug, fmt: '<span class="v6don-kira">✨</span>' },
-  { order: 'post', re: /[えエ][らラ]いっ[!！]*/ig, fmt: erai => {
+  { order: 'post', re: /([えエ][らラ]いっ|erait+)[!！]*/ig, fmt: erai => {
     let delay = 0;
     return erai.split('').map(c => {
       c = `<span class="v6don-wave" style="animation-delay: ${delay}ms">${c}</span>`;
