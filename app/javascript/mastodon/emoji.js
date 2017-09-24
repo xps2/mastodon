@@ -13,39 +13,35 @@ const emojify = (str, customEmojis = {}) => {
     while (i < str.length && (tag = '<&:'.indexOf(str[i])) === -1 && !(match = trie.search(str.slice(i)))) {
       i += str.codePointAt(i) < 65536 ? 1 : 2;
     }
-    let replaceEnd, replacement = '';
+    let rend, replacement = '';
     if (i === str.length) {
       break;
     } else if (str[i] === ':') {
-      const testsn = () => {
-        replaceEnd = str.indexOf(':', i + 1) + 1;
-        if (!replaceEnd) return false; // no pair of ':'
+      if (!(() => {
+        rend = str.indexOf(':', i + 1) + 1;
+        if (!rend) return false; // no pair of ':'
         const lt = str.indexOf('<', i + 1);
-        if (!(lt === -1 || lt >= replaceEnd)) return false; // tag appeared before closing ':'
-        const shortname = str.slice(i, replaceEnd);
-        // if test for :shortname: passed, set replacement and return true
+        if (!(lt === -1 || lt >= rend)) return false; // tag appeared before closing ':'
+        const shortname = str.slice(i, rend);
+        // now got a replacee as ':shortname:'
+        // if you want additional emoji handler, add statements below which set replacement and return true.
         if (shortname in customEmojis) {
           replacement = `<img draggable="false" class="emojione" alt="${shortname}" title="${shortname}" src="${customEmojis[shortname]}" />`;
           return true;
         }
         return false;
-      };
-      if (!testsn()) {
-        replaceEnd = ++i;
-      }
-    } else if (tag >= 0) {
-      // <, &
-      replaceEnd = str.indexOf('>;'[tag], i + 1) + 1;
-      if (!replaceEnd) break;
-      i = replaceEnd;
-    } else {
-      // matched to unicode emoji
+      })()) rend = ++i;
+    } else if (tag >= 0) { // <, &
+      rend = str.indexOf('>;'[tag], i + 1) + 1;
+      if (!rend) break;
+      i = rend;
+    } else { // matched to unicode emoji
       const [filename, shortCode] = unicodeMapping[match];
       replacement = `<img draggable="false" class="emojione" alt="${match}" title=":${shortCode}:" src="${assetHost}/emoji/${filename}.svg" />`;
-      replaceEnd = i + match.length;
+      rend = i + match.length;
     }
     rtn += str.slice(0, i) + replacement;
-    str = str.slice(replaceEnd);
+    str = str.slice(rend);
   }
   return rtn + str;
 };
