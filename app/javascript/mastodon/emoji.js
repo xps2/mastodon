@@ -23,7 +23,7 @@ const emojify = (str, customEmojis = {}) => {
         const lt = str.indexOf('<', i + 1);
         if (!(lt === -1 || lt >= replaceEnd)) return false; // tag appeared before closing ':'
         const shortname = str.slice(i, replaceEnd);
-        // if replacing :shortname: succeed, set replacement and return true
+        // if test for :shortname: passed, set replacement and return true
         if (shortname in customEmojis) {
           replacement = `<img draggable="false" class="emojione" alt="${shortname}" title="${shortname}" src="${customEmojis[shortname]}" />`;
           return true;
@@ -54,3 +54,26 @@ const emojify_v6don = (text, customEmojis) => emojify(highlight(text, customEmoj
 
 export { emojify as emojify_original };
 export default emojify_v6don;
+
+export const buildCustomEmojis = customEmojis => {
+  const emojis = [];
+
+  customEmojis.forEach(emoji => {
+    const shortcode = emoji.get('shortcode');
+    const url       = emoji.get('url');
+    const name      = shortcode.replace(':', '');
+
+    emojis.push({
+      id: name,
+      name,
+      short_names: [name],
+      text: '',
+      emoticons: [],
+      keywords: [name],
+      imageUrl: url,
+      custom: true,
+    });
+  });
+
+  return emojis;
+};
