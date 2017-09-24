@@ -165,13 +165,13 @@ trlist.pre.push(apply_without_tag((s, ce) => {
 }));
 
 // ₍₍🥫⁾⁾
-trlist.pre.push(apply_without_tag((s, ce) => s.replace(/(₍₍|⁽⁽)([^₍₎⁽⁾]+)(₎₎|⁾⁾)/g, (all, left, biti, right) => {
+trlist.pre.push(apply_without_tag((s, ce) => s.replace(/(₍₍|⁽⁽)(\s*)([^₍₎⁽⁾]+?)(\s*)(₎₎|⁾⁾)/g, (all, left, lsp, biti, rsp, right) => {
   const l = left === '⁽⁽' ? 1 : 0;
   const r = right === '⁾⁾' ? 1 : 0;
   if (l ^ r === 0) return all;
   const list = split_each_emoji(biti, ce);
-  if (list.length > 3) return all;
-  return `${left}<span class="v6don-bitibiti">${biti}</span>${right}`;
+  if (list.length > 5) return all;
+  return `${left}${lsp}<span class="v6don-bitibiti">${biti}</span>${rsp}${right}`;
 })));
 
 // 置換をString.replace()に投げるやつ
@@ -202,9 +202,9 @@ byre.push(...[
   { order: 'post', tag: true, re: /(<(?:p|br\s?\/?)>)((\(?)※.*?(\)?))<\/p>/mg, fmt: (all, br, text, po, pc) =>
     /<br\s?\/?>/.test(text) || (po && !pc || !po && pc) ? all : `${/br/.test(br) ? br : ''}<span class="v6don-kozinkanso">${text}</span></p>`,
   },
-  { order: 'post', re: /[■-◿〽]/ug, fmt: c => `&#${c.codePointAt(0)};` },
+  { order: 'pre', re: /[■-◿〽]/ug, fmt: c => `&#${c.codePointAt(0)};` },
   { order: 'post', re: /✨/ug, fmt: '<span class="v6don-kira">✨</span>' },
-  { order: 'post', re: /えらいっ[!！]*/g, fmt: erai => {
+  { order: 'post', re: /[えエ][らラ]いっ[!！]*/ig, fmt: erai => {
     let delay = 0;
     return erai.split('').map(c => {
       c = `<span class="v6don-wave" style="animation-delay: ${delay}ms">${c}</span>`;
@@ -213,6 +213,10 @@ byre.push(...[
     }).join('');
   } },
   { order: 'post', re: /🤮/ug, fmt: '<img class="emojione" alt="🤮" title=":puke:" src="/emoji/proprietary/puke.png"/>' },
+  {
+    order: 'post', tag: true, re: /<img v6don-emoji:([^:]+):([^>]+)>/g,
+    fmt: (all, name, char) => `<span class="v6don-emoji" data-gryph="${char}"></span><span class="invisible">&#58;${name}&#58;</span>`,
+  },
 ]);
 
 const replace_by_re = (re, fmt) => str => {
@@ -235,28 +239,20 @@ const replace_by_re = (re, fmt) => str => {
 };
 
 byre.forEach(e => {
-  trlist[e.order ? e.order : 'rec'].push(e.tag ? replace_by_re(e.re, e.fmt) : apply_without_tag(replace_by_re(e.re, e.fmt)));
+  trlist[e.order || 'rec'].push(e.tag ? replace_by_re(e.re, e.fmt) : apply_without_tag(replace_by_re(e.re, e.fmt)));
 });
 
 // :tag:の置換
 const shorttab = {};
 
 // :tag: をフツーにimgで返すやつ
-const shorttab_replacer_normal = match => `<img class="emojione" alt=":${match}:" title=":${match}:" src="${shorttab[match].asset}" />`;
 [
-  'rmn_e', 'matsu',
-].forEach(name => {
-  shorttab[name] = {
-    asset: require(`../../images/v6don/${name}.svg`),
-    replacer: shorttab_replacer_normal,
-  };
-});
-[
-  'poyo',
-].forEach(name => {
-  shorttab[name] = {
-    asset: require(`../../images/v6don/${name}.png`),
-    replacer: shorttab_replacer_normal,
+  { name: 'rmn_e', ext: 'svg' },
+  { name: 'matsu', ext: 'svg' },
+  { name: 'poyo', ext: 'png' },
+].forEach(e => {
+  shorttab[e.name] = {
+    replacer: () => `<img class="emojione" alt=":${e.name}:" title=":${e.name}:" src="${require(`../../images/v6don/${e.name}.${e.ext}`)}" />`,
   };
 });
 
@@ -314,7 +310,8 @@ shorttab.don = {
   { name: 'tree', char: '\u{f0004}' },
 ].forEach(e => {
   shorttab[e.name] = {
-    replacer: () => `<span class="v6don-emoji" data-gryph="${e.char}"></span><span class="invisible">&#58;${e.name}&#58;</span>`,
+    // 再帰処理内で1文字として扱わせるために一旦無効なimgに変換、再帰を抜けた後にテキスト化
+    replacer: () => `<img v6don-emoji:${e.name}:${e.char}>`,
   };
 });
 
