@@ -215,7 +215,7 @@ byre.push(...[
   { order: 'post', re: /🤮/ug, fmt: '<img class="emojione" alt="🤮" title=":puke:" src="/emoji/proprietary/puke.png"/>' },
   {
     order: 'post', tag: true, re: /<img v6don-emoji:([^:]+):([^>]+)>/g,
-    fmt: (all, name, char) => `<span class="v6don-emoji" data-gryph="${char}"></span><span class="invisible">&#58;${name}&#58;</span>`,
+    fmt: (all, name, char) => `<span class="v6don-emoji" data-gryph="${char}" title="&#58;${name}&#58;"></span><span class="invisible">&#58;${name}&#58;</span>`,
   },
 ]);
 
