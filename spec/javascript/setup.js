@@ -15,3 +15,6 @@ Object.keys(window).forEach(property => {
 require.extensions['.svg'] = (mod, fn) => {
   mod.exports = '/packs/' + fn.replace(/.*\//, '');
 };
+require.extensions['.png'] = (mod, fn) => {
+  mod.exports = '/packs/' + fn.replace(/.*\//, '');
+};

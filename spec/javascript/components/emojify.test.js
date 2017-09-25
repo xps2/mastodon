@@ -20,28 +20,6 @@ describe('emojify', () => {
     expect(emojify(':smile')).to.equal(':smile');
   });
 
-  const svgintro = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="emojione" viewBox="0 0 1 1"><g><title>';
-  it('does unicode', () => {
-    expect(emojify('\uD83D\uDC69\u200D\uD83D\uDC69\u200D\uD83D\uDC66\u200D\uD83D\uDC66')).to.equal(
-      `${svgintro}:family_wwbb:</title><desc>👩‍👩‍👦‍👦</desc><use xlink:href="/packs/emojione.sprites.svg#emoji-1f469-1f469-1f466-1f466"/></g></svg>`);
-    expect(emojify('\uD83D\uDC68\uD83D\uDC69\uD83D\uDC67\uD83D\uDC67')).to.equal(
-      `${svgintro}:family_mwgg:</title><desc>👨👩👧👧</desc><use xlink:href="/packs/emojione.sprites.svg#emoji-1f468-1f469-1f467-1f467"/></g></svg>`);
-    expect(emojify('\uD83D\uDC69\uD83D\uDC69\uD83D\uDC66')).to.equal(`${svgintro}:family_wwb:</title><desc>👩👩👦</desc><use xlink:href="/packs/emojione.sprites.svg#emoji-1f469-1f469-1f466"/></g></svg>`);
-    expect(emojify('\u2757')).to.equal(
-      `${svgintro}:exclamation:</title><desc>❗</desc><use xlink:href="/packs/emojione.sprites.svg#emoji-2757"/></g></svg>`);
-  });
-
-  it('does multiple unicode', () => {
-    expect(emojify('\u2757 #\uFE0F\u20E3')).to.equal(
-      '<img draggable="false" class="emojione" alt="❗" title=":exclamation:" src="/emoji/2757.svg" /> <img draggable="false" class="emojione" alt="#️⃣" title=":hash:" src="/emoji/23-20e3.svg" />');
-    expect(emojify('\u2757#\uFE0F\u20E3')).to.equal(
-      '<img draggable="false" class="emojione" alt="❗" title=":exclamation:" src="/emoji/2757.svg" /><img draggable="false" class="emojione" alt="#️⃣" title=":hash:" src="/emoji/23-20e3.svg" />');
-    expect(emojify('\u2757 #\uFE0F\u20E3 \u2757')).to.equal(
-      '<img draggable="false" class="emojione" alt="❗" title=":exclamation:" src="/emoji/2757.svg" /> <img draggable="false" class="emojione" alt="#️⃣" title=":hash:" src="/emoji/23-20e3.svg" /> <img draggable="false" class="emojione" alt="❗" title=":exclamation:" src="/emoji/2757.svg" />');
-    expect(emojify('foo \u2757 #\uFE0F\u20E3 bar')).to.equal(
-      'foo <img draggable="false" class="emojione" alt="❗" title=":exclamation:" src="/emoji/2757.svg" /> <img draggable="false" class="emojione" alt="#️⃣" title=":hash:" src="/emoji/23-20e3.svg" /> bar');
-  });
-
   it('ignores unicode inside of tags', () => {
     expect(emojify('<p data-foo="\uD83D\uDC69\uD83D\uDC69\uD83D\uDC66"></p>')).to.equal('<p data-foo="\uD83D\uDC69\uD83D\uDC69\uD83D\uDC66"></p>');
   });
