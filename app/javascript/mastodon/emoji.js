@@ -1,16 +1,10 @@
-import { unicodeMapping } from './emojione_light';
-import Trie from 'substring-trie';
 import highlight from './v6don/highlighter';
-
-const trie = new Trie(Object.keys(unicodeMapping));
-
-const assetHost = process.env.CDN_HOST || '';
 
 const emojify = (str, customEmojis = {}) => {
   let rtn = '';
   for (;;) {
-    let match, i = 0, tag;
-    while (i < str.length && (tag = '<&:'.indexOf(str[i])) === -1 && !(match = trie.search(str.slice(i)))) {
+    let i = 0, tag;
+    while (i < str.length && (tag = '<&:'.indexOf(str[i])) === -1) {
       i += str.codePointAt(i) < 65536 ? 1 : 2;
     }
     let rend, replacement = '';
@@ -31,14 +25,10 @@ const emojify = (str, customEmojis = {}) => {
         }
         return false;
       })()) rend = ++i;
-    } else if (tag >= 0) { // <, &
+    } else { // <, &
       rend = str.indexOf('>;'[tag], i + 1) + 1;
       if (!rend) break;
       i = rend;
-    } else { // matched to unicode emoji
-      const [filename, shortCode] = unicodeMapping[match];
-      replacement = `<img draggable="false" class="emojione" alt="${match}" title=":${shortCode}:" src="${assetHost}/emoji/${filename}.svg" />`;
-      rend = i + match.length;
     }
     rtn += str.slice(0, i) + replacement;
     str = str.slice(rend);

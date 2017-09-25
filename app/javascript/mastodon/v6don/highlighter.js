@@ -249,21 +249,16 @@ bytrie.rec['熱盛'] = `<img alt="熱盛" src="${require('../../images/v6don/atu
 ].forEach(e => {
   bytrie.post[e.ptn] = e.fmt;
 });
-void (() => {
-  const f = c => `&#${c.codePointAt(0)};`;
-  for (let c = '■'; c <= '◿'; c++) {
-    bytrie.pre[c] = f;
-  }
-  bytrie.pre['〽'] = f;
-})();
 
-Object.keys(bytrie).forEach(k => {
-  const t = new Trie(Object.keys(bytrie[k]));
-  trlist[k].push(apply_without_tag(str => {
+Object.keys(bytrie).forEach(o => {
+  const k = Object.keys(bytrie[o]);
+  if (!k.length) return;
+  const t = new Trie(k);
+  trlist[o].push(apply_without_tag(str => {
     let rtn = '', match;
     while (str) {
       if ((match = t.search(str))) {
-        rtn += typeof bytrie[k][match] === 'string' ? bytrie[k][match] : bytrie[k][match](match);
+        rtn += typeof bytrie[o][match] === 'string' ? bytrie[o][match] : bytrie[o][match](match);
         str = str.slice(match.length);
       } else {
         const cl = str.codePointAt(0) < 65536 ? 1 : 2;
