@@ -1,16 +1,11 @@
 import highlight from './v6don/highlighter';
 
+const tagtab = { '<' : '>', '&': ';' };
 const emojify = (str, customEmojis = {}) => {
-  let rtn = '';
-  for (;;) {
-    let i = 0, tag;
-    while (i < str.length && (tag = '<&:'.indexOf(str[i])) === -1) {
-      i += str.codePointAt(i) < 65536 ? 1 : 2;
-    }
-    let rend, replacement = '';
-    if (i === str.length) {
-      break;
-    } else if (str[i] === ':') {
+  let rtn = '', tag;
+  while ((tag = /[<&:]/.exec(str))) {
+    let i = tag.index, c = tag[0], replacement = '', rend;
+    if (c === ':') {
       if (!(() => {
         rend = str.indexOf(':', i + 1) + 1;
         if (!rend) return false; // no pair of ':'
@@ -26,7 +21,7 @@ const emojify = (str, customEmojis = {}) => {
         return false;
       })()) rend = ++i;
     } else { // <, &
-      rend = str.indexOf('>;'[tag], i + 1) + 1;
+      rend = str.indexOf(tagtab[c], i + 1) + 1;
       if (!rend) break;
       i = rend;
     }
