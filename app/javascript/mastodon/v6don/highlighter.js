@@ -313,17 +313,6 @@ for (name in proprietary_image) {
   };
 }
 
-// <object>が必要なSVG
-shorttab.biwako = {
-  remtest: rem => /^-[gyorpw]$/.test(rem),
-  asset: require('../../images/v6don/biwako.svg'),
-  replacer: (match, rem) => {
-    const alt = `:biwako${rem || ''}:`;
-    const path = shorttab.biwako.asset + (rem ? `#${rem[1]}` : '');
-    return `<object class='emojione' data='${path}' title='${alt}'>${hesc(alt)}</object>`;
-  },
-};
-
 // リンク
 shorttab.don = {
   replacer: () => `<a href="https://mstdn.maud.io/">${hesc(':don:')}</a>`,
