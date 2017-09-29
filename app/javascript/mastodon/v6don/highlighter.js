@@ -241,7 +241,7 @@ byre.forEach(e => {
 // trie
 const bytrie = { pre: {}, rec: {}, post: {} };
 
-bytrie.rec['熱盛'] = `<img alt="熱盛" src="${require('../../images/v6don/atumori.png')}" style="height: 2em;"/>`;
+bytrie.rec['熱盛'] = `<img class="emojione" alt="熱盛" src="/emoji/proprietary/atumori.svg" style="width: 3.06em; height: 2em;"/>`;
 [
   { ptn: '✨', fmt: '<span class="v6don-kira">✨</span>' },
   { ptn: '🤮', fmt: '<img class="emojione" alt="🤮" title=":puke:" src="/emoji/proprietary/puke.png"/>' },
