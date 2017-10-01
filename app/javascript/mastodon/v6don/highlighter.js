@@ -195,6 +195,12 @@ byre.push(...[
 }));
 
 byre.push(...[
+  { re: /([|｜])([^《]{1,10})《([^》]{1,40})》/g, fmt: (all, begin, base, ruby) => {
+    return `<span class="invisible">${begin}</span><ruby>${base}<rt>${ruby}</rt></ruby><span class="invisible">《${ruby}》</span>`;
+  } },
+  { re: /([\w]+)《([^》]{1,40})》/g, fmt: (all, base, ruby) => {
+    return `<ruby>${base}<rt>${ruby}</rt></ruby><span class="invisible">《${ruby}》</span>`;
+  } },
   { tag: true, re: /(<a\s[^>]*>)(.*?:don:.*?)<\/a>/mg, fmt: (all, tag, text) =>
     tag + text.replace(/:don:/g, '&#58;don&#58;') + '</a>',
   },
