@@ -4162,11 +4162,11 @@ noscript {
   $duration: 400ms;
   $delay: 100ms;
 
-  .tabs-bar,
-  .search {
-    will-change: margin-top;
-    transition: margin-top $duration $delay;
-  }
+//  .tabs-bar,
+//  .search {
+//    will-change: margin-top;
+//    transition: margin-top $duration $delay;
+//  }
 
   .navigation-bar {
     will-change: padding-bottom;
@@ -4191,10 +4191,10 @@ noscript {
   }
 
   .is-composing {
-    .tabs-bar,
-    .search {
-      margin-top: -50px;
-    }
+//    .tabs-bar,
+//    .search {
+//      margin-top: -50px;
+//    }
 
     .navigation-bar {
       padding-bottom: 0;
