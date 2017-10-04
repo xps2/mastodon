@@ -151,3 +151,6 @@ $quoted-text-color: #0e7f28;
 ruby {
   ruby-align: space-between;
 }
+.v6don-ruby-rt::after {
+  content: attr(data-ruby);
+}

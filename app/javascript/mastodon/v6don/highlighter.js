@@ -195,12 +195,15 @@ byre.push(...[
 }));
 
 byre.push(...[
-  { re: /([|｜])([^《]{1,10})《([^》]{1,40})》/g, fmt: (all, begin, base, ruby) => {
-    return `<span class="invisible">${begin}</span><ruby>${base}<rp>《</rp><rt>${ruby}</rt><rp>》</rp></ruby>`;
-  } },
-  { re: /([A-Za-z_\-\u00a0À-ÖØ-öø-ʯ\u0300-\u036f‐'’々\u4e00-\u9fff\uf900-\ufaff\u{20000}-\u{2ebef}]+)《([^》]{1,40})》/ug, fmt: (all, base, ruby) => {
-    return `<ruby>${base}<rp>《</rp><rt>${ruby}</rt><rp>》</rp></ruby>`;
-  } },
+  {
+    re: /([|｜])([^《]{1,10})《([^》]{1,40})》/g,
+    fmt: (all, begin, base, ruby) => `<span class="invisible">${begin}</span>`
+      + `<ruby>${base}<span class="invisible">《${ruby}》</span><rt><span class="v6don-ruby-rt" data-ruby="${hesc(ruby)}"></span></rt></ruby>`,
+  },
+  {
+    re: /([A-Za-z_\-\u00a0À-ÖØ-öø-ʯ\u0300-\u036f‐'’々\u4e00-\u9fff\uf900-\ufaff\u{20000}-\u{2ebef}]+)《([^》]{1,40})》/ug,
+    fmt: (all, base, ruby) => `<ruby>${base}<span class="invisible">《${ruby}》</span><rt><span class="v6don-ruby-rt" data-ruby="${hesc(ruby)}"></span></rt></ruby>`,
+  },
   { tag: true, re: /(<a\s[^>]*>)(.*?:don:.*?)<\/a>/mg, fmt: (all, tag, text) =>
     tag + text.replace(/:don:/g, '&#58;don&#58;') + '</a>',
   },
