@@ -1,5 +1,5 @@
 import Trie from 'substring-trie';
-import { emojify_original as emojify } from '../emoji';
+import { emojify_original as emojify } from '../emoji/emoji';
 
 // ↓の配列に絵文字置換対象の文字列を受け取って置換を施した文字列を返すという
 // 関数を追加していく
@@ -187,8 +187,8 @@ byre.push({
 });
 
 byre.push(...[
-  { re: /5,?000\s?兆円/g, img: require('../../images/v6don/5000tyoen.svg'), h: 1.8 },
-  { re: /5,?000兆/g, img: require('../../images/v6don/5000tyo.svg'), h: 1.8 },
+  { re: /5,?000\s?兆円/g, img: require('../../../images/v6don/5000tyoen.svg'), h: 1.8 },
+  { re: /5,?000兆/g, img: require('../../../images/v6don/5000tyo.svg'), h: 1.8 },
 ].map(e => {
   e.fmt = (m) => `<img alt="${hesc(m)}" src="${e.img}" style="height: ${e.h}em;"/>`;
   return e;
@@ -289,7 +289,7 @@ const shorttab = {};
   { name: 'poyo', ext: 'png' },
 ].forEach(e => {
   shorttab[e.name] = {
-    replacer: () => `<img class="emojione" alt=":${e.name}:" title=":${e.name}:" src="${require(`../../images/v6don/${e.name}.${e.ext}`)}" />`,
+    replacer: () => `<img class="emojione" alt=":${e.name}:" title=":${e.name}:" src="${require(`../../../images/v6don/${e.name}.${e.ext}`)}" />`,
   };
 });
 
@@ -299,7 +299,7 @@ const shorttab = {};
 ].forEach(name => {
   shorttab[name] = {
     remtest: (rem) => /^\d+$/.test(rem),
-    asset: require(`../../images/v6don/${name}.svg`),
+    asset: require(`../../../images/v6don/${name}.svg`),
     replacer: (match, rem) => {
       const alt = match + (rem || '');
       const style = rem ? `style="transform: rotate(${rem}deg)"` : '';
