@@ -1,6 +1,9 @@
 import highlight from '../v6don/highlighter';
 
 const tagtab = { '<' : '>', '&': ';' };
+
+let allowAnimations = false;
+
 const emojify = (str, customEmojis = {}) => {
   let rtn = '', tag;
   while ((tag = /[<&:]/.exec(str))) {
@@ -15,7 +18,8 @@ const emojify = (str, customEmojis = {}) => {
         // now got a replacee as ':shortname:'
         // if you want additional emoji handler, add statements below which set replacement and return true.
         if (shortname in customEmojis) {
-          replacement = `<img draggable="false" class="emojione" alt="${shortname}" title="${shortname}" src="${customEmojis[shortname]}" />`;
+          const filename = allowAnimations ? customEmojis[shortname].url : customEmojis[shortname].static_url;
+          replacement = `<img draggable="false" class="emojione" alt="${shortname}" title="${shortname}" src="${filename}" />`;
           return true;
         }
         return false;
@@ -36,12 +40,14 @@ const emojify_v6don = (text, customEmojis) => emojify(highlight(text, customEmoj
 export { emojify as emojify_original };
 export default emojify_v6don;
 
-export const buildCustomEmojis = customEmojis => {
+export const buildCustomEmojis = (customEmojis, overrideAllowAnimations = false) => {
   const emojis = [];
+
+  allowAnimations = overrideAllowAnimations;
 
   customEmojis.forEach(emoji => {
     const shortcode = emoji.get('shortcode');
-    const url       = emoji.get('static_url');
+    const url       = allowAnimations ? emoji.get('url') : emoji.get('static_url');
     const name      = shortcode.replace(':', '');
 
     emojis.push({
