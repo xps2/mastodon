@@ -81,12 +81,11 @@ Object.keys(emojiIndex.emojis).forEach(key => {
   shortCodesToEmojiData[key].push(searchData);
 });
 
-// JSON.parse/stringify is to emulate what @preval is doing and avoid any
-// inconsistent behavior in dev mode
-module.exports = JSON.parse(JSON.stringify([
+module.exports = JSON.stringify([
   shortCodesToEmojiData,
   emojiMartData.skins,
   emojiMartData.categories,
   emojiMartData.short_names,
   emojisWithoutShortCodes,
-]));
+]).replace(/[\u{1f100}-\u{1ffff}]/ug, c => String.fromCharCode(c.codePointAt(0) - 0x1f000));
+// \u1Fxxx (4bytes) -> \u0xxx (2-3bytes)

@@ -8,7 +8,7 @@ const [
   categories, // eslint-disable-line no-unused-vars
   short_names, // eslint-disable-line no-unused-vars
   emojisWithoutShortCodes,
-] = require('./emoji_compressed');
+] = require('./emoji_compressed_int');
 const { unicodeToFilename } = require('./unicode_to_filename');
 
 // decompress

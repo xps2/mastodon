@@ -2,7 +2,7 @@
 // "data" object, such that we can use it for a light version of emoji-mart's
 // emojiIndex.search functionality.
 const { unicodeToUnifiedName } = require('./unicode_to_unified_name');
-const [ shortCodesToEmojiData, skins, categories, short_names ] = require('./emoji_compressed');
+const [ shortCodesToEmojiData, skins, categories, short_names ] = require('./emoji_compressed_int');
 
 const emojis = {};
 
