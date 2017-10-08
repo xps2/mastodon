@@ -295,7 +295,7 @@ const shorttab = {};
 
 // 回転対応絵文字
 [
-  'nicoru', 'iine', 'irane', 'mayo',
+  'nicoru',
 ].forEach(name => {
   shorttab[name] = {
     remtest: (rem) => /^\d+$/.test(rem),
