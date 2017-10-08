@@ -83,11 +83,99 @@ Object.keys(emojiIndex.emojis).forEach(key => {
 
 // JSON.parse/stringify is to emulate what @preval is doing and avoid any
 // inconsistent behavior in dev mode
-module.exports = JSON.parse(JSON.stringify([
+const rawjson = JSON.stringify([
   shortCodesToEmojiData,
   emojiMartData.skins,
   emojiMartData.categories,
   emojiMartData.short_names,
   emojisWithoutShortCodes,
-]).replace(/[\u{1f100}-\u{1ffff}]/ug, c => String.fromCharCode(c.codePointAt(0) - 0x1f000)));
-// \u1Fxxx (4bytes) -> \u0xxx (2-3bytes)
+]);
+
+let compjson = '';
+const tokens = [];
+const tokenscjk = [];
+// 3400 - 4dbf, 4e00 - 9fff, ac00 - d7ff, e000 - faff
+const cjkjmp = { 0x4dc0: 0x4e00, 0xa000: 0xac00, 0xd800: 0xe000 };
+
+for (let idx = 0, cjk = 0x3400;;) {
+  // fetch string
+  const open = rawjson.indexOf('"', idx) + 1;
+  if (!open) {
+    compjson += rawjson.slice(idx);
+    break;
+  }
+  compjson += rawjson.slice(idx, open);
+  let close = open;
+  for (;;) {
+    close = rawjson.indexOf('"', close);
+    if (rawjson[close - 1] !== '\\' || rawjson[close - 2] !== '\\') {
+      break;
+    }
+    close++;
+  }
+  idx = close + 1;
+  const str = JSON.parse(rawjson.slice(open - 1, idx));
+  let replacement = rawjson.slice(open, close);
+  const cjkfy = str => str.split(',').reduce((rtn, tok) => {
+    // encode each CSV value to single CJK char
+    let cjkidx;
+    if ((cjkidx = tokens.indexOf(tok)) === -1) {
+      tokens.push(tok);
+      tokenscjk.push(String.fromCharCode(cjk++));
+      if (cjk in cjkjmp) cjk = cjkjmp[cjk];
+      cjkidx = tokens.length - 1;
+    }
+    return rtn + tokenscjk[cjkidx];
+  }, '');
+  if (/^[\dA-Fa-f-]{4,}$/.test(str)) {
+    // long filename to unicode
+    try {
+      if (str.indexOf('-') === -1) {
+        throw null;
+      }
+      // 1: upper+nopadding
+      // 2: upper+padding
+      // 3: lower+nopadding
+      // 4: lower+padding
+      let lower, padding = null;
+      if (/^[\dA-F-]*$/.test(str)) {
+        lower = false;
+      } else if (/^[\da-f-]*$/.test(str)) {
+        lower = true;
+      } else {
+        throw null;
+      }
+      const uni = str.split('-').reduce((rtn, hex) => {
+        if (!hex.length) throw null;
+        if (hex.length === 4) {
+          if (hex[0] === '0') {
+            if (padding === false) throw null;
+            padding = true;
+          }
+        } else {
+          if (hex[0] === '0') throw null;
+        }
+        if (hex.length < 4) {
+          if (padding) throw null;
+          padding = false;
+        }
+        return rtn + String.fromCodePoint(parseInt(hex, 16));
+      }, '');
+      const prefix = (padding ? 1 : 0) + (lower ? 2 : 0);
+      replacement = String.fromCodePoint(prefix + 1) + uni;
+    } catch (e) {
+      if (str.length >= 6) replacement = cjkfy(str);
+    }
+  } else if (str.indexOf('Fitzpatrick') !== -1) {
+  } else if (/^[\x20-\xff]+$/.test(str)) {
+    replacement = cjkfy(str);
+  }
+  compjson += replacement + '"';
+}
+
+// escape SMP char: \u1Fxxx (4bytes) -> \u0xxx (2-3bytes)
+module.exports = [
+  compjson.replace(/[\u{1f100}-\u{1ffff}]/ug, c => String.fromCharCode(c.codePointAt(0) - 0x1f000))
+  .replace(/"([\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7ff\ue000-\ufaff]+)":/g, (all, cjk) => cjk + ':'),
+  tokens.join(','),
+];
