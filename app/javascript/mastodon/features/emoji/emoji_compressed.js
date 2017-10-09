@@ -166,16 +166,24 @@ for (let idx = 0, cjk = 0x3400;;) {
     } catch (e) {
       if (str.length >= 6) replacement = cjkfy(str);
     }
-  } else if (str.indexOf('Fitzpatrick') !== -1) {
-  } else if (/^[\x20-\xff]+$/.test(str)) {
+  } else if (/^[\x20-\xff]+$/.test(str) && str === str.toLowerCase()) {
     replacement = cjkfy(str);
   }
   compjson += replacement + '"';
 }
 
+const comptoken = tokens.reduce((comp, tok) => {
+  if (tok === '') return comp + ',';
+  const c = tok[0];
+  const u = c.toUpperCase();
+  return comp + (c === u ? ',' + tok : u + tok.slice(1));
+})
+
 // escape SMP char: \u1Fxxx (4bytes) -> \u0xxx (2-3bytes)
 module.exports = [
   compjson.replace(/[\u{1f100}-\u{1ffff}]/ug, c => String.fromCharCode(c.codePointAt(0) - 0x1f000))
-  .replace(/"([\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7ff\ue000-\ufaff]+)":/g, (all, cjk) => cjk + ':'),
-  tokens.join(','),
+  .replace(/\u200d/g, '\x05')
+  .replace(/"([\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7ff\ue000-\ufaff]+)"/g, (all, cjk) => cjk)
+  .replace(/:\[\[\["|,\[\],|"\],\["|"\]\],\["|\]\],/g, m => String.fromCharCode([':[[["', ',[],', '"],["', '"]],["', ']],'].indexOf(m) + 0xe)),
+  comptoken,
 ];
