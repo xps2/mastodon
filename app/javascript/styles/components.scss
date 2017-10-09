@@ -2838,7 +2838,7 @@ button.icon-button.active i.fa-retweet {
     outline: 0 !important;
   }
 
-  > svg {
+  img {
     filter: grayscale(100%);
     opacity: 0.8;
     display: block;
@@ -2851,14 +2851,14 @@ button.icon-button.active i.fa-retweet {
   &:hover,
   &:active,
   &:focus {
-    > svg {
+    img {
       opacity: 1;
       filter: none;
     }
   }
 }
 
-.dropdown--active .emoji-button > svg {
+.dropdown--active .emoji-button img {
   opacity: 1;
   filter: none;
 }
