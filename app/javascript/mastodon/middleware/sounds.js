@@ -22,16 +22,26 @@ export default function soundsMiddleware() {
   const soundCache = {
     boop: createAudio([
       {
-        src: '/sounds/proprietary/okdesuka.opus',
-        type: 'audio/ogg;codecs=opus',
-      },
-      {
         src: '/sounds/boop.ogg',
         type: 'audio/ogg',
       },
       {
         src: '/sounds/boop.mp3',
         type: 'audio/mpeg',
+      },
+    ]),
+    '1up': createAudio([
+      {
+        src: '/sounds/proprietary/1up.opus',
+        type: 'audio/ogg;codecs=opus',
+      },
+      {
+        src: '/sounds/proprietary/1up.mp4',
+        type: 'audio/mp4;codecs=mp4a.40.2',
+      },
+      {
+        src: '/sounds/proprietary/1up.ogg',
+        type: 'audio/ogg;codecs=vorbis',
       },
     ]),
   };

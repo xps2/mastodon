@@ -45,7 +45,7 @@ export function updateNotifications(notification, intlMessages, intlLocale) {
       notification,
       account: notification.account,
       status: notification.status,
-      meta: playSound ? { sound: 'boop' } : undefined,
+      meta: playSound ? { sound: '1up' } : undefined,
     });
 
     fetchRelatedRelationships(dispatch, [notification]);
