@@ -283,11 +283,7 @@ Object.keys(bytrie).forEach(o => {
 const shorttab = {};
 
 // :tag: をフツーにimgで返すやつ
-[
-  { name: 'rmn_e', ext: 'svg' },
-  { name: 'matsu', ext: 'svg' },
-  { name: 'poyo', ext: 'png' },
-].forEach(e => {
+[].forEach(e => {
   shorttab[e.name] = {
     replacer: () => `<img class="emojione" alt=":${e.name}:" title=":${e.name}:" src="${require(`../../../images/v6don/${e.name}.${e.ext}`)}" />`,
   };
@@ -330,10 +326,6 @@ shorttab.don = {
 // 単色絵文字
 [
   { name: 'hohoemi', char: '\u{f0000}' },
-  { name: 'hiki', char: '\u{f0001}' },
-  { name: 'lab', char: '\u{f0002}' },
-  { name: 'tama', char: '\u{f0003}' },
-  { name: 'tree', char: '\u{f0004}' },
 ].forEach(e => {
   shorttab[e.name] = {
     // 再帰処理内で1文字として扱わせるために一旦無効なimgに変換、再帰を抜けた後にテキスト化
