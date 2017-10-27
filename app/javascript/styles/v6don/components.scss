@@ -51,41 +51,6 @@
   src: url('../fonts/v6don/v6don-emoji.woff') format('woff');
 }
 
-.v6don-fg-stroke {
-  stroke: $primary-text-color;
-  fill: none;
-}
-.v6don-fg-round {
-  fill: $primary-text-color;
-}
-
-.reply-indicator__content {
-  .v6don-fg-stroke {
-    stroke: $ui-base-color;
-  }
-  .v6don-fg-round {
-    fill: $ui-base-color;
-  }
-}
-
-.activity-stream {
-  .v6don-fg-stroke {
-    stroke: $ui-base-color;
-  }
-  .v6don-fg-round {
-    fill: $ui-base-color;
-  }
-}
-
-.muted {
-  .v6don-fg-stroke {
-    stroke: $ui-base-lighter-color;
-  }
-  .v6don-fg-round {
-    fill: $ui-base-lighter-color;
-  }
-}
-
 .v6don-kira {
   display: inline-block;
   animation: v6don-kira 0.8s infinite;
@@ -153,4 +118,17 @@ ruby {
 }
 .v6don-ruby-rt::after {
   content: attr(data-ruby);
+}
+
+.v6don-estclock {
+  padding: 10px;
+
+  th {
+    text-align: right;
+    padding-right: 5px;
+  }
+
+  &[data-tick='hidden'] .v6don-estclock-tick {
+    opacity: 0;
+  }
 }
