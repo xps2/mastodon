@@ -294,7 +294,7 @@ const shorttab = {};
   'nicoru',
 ].forEach(name => {
   shorttab[name] = {
-    remtest: (rem) => /^\d+$/.test(rem),
+    remtest: (rem) => /^-?\d+$/.test(rem),
     asset: require(`../../../images/v6don/${name}.svg`),
     replacer: (match, rem) => {
       const alt = match + (rem || '');
