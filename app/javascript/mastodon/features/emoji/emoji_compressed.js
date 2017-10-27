@@ -178,7 +178,7 @@ const comptoken = tokens.reduce((comp, tok) => {
   const c = tok[0];
   const u = c.toUpperCase();
   return comp + (c === u ? ',' + tok : u + tok.slice(1));
-})
+});
 
 // escape SMP char: \u1Fxxx (4bytes) -> \u0xxx (2-3bytes)
 module.exports = [

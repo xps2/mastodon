@@ -10,7 +10,7 @@ compdict.slice(1).split('').forEach(c => {
     return;
   }
   const lc = c.toLowerCase();
-  if (lc != c && c === c.toUpperCase()) {
+  if (lc !== c && c === c.toUpperCase()) {
     dict.push(lc);
     return;
   }
