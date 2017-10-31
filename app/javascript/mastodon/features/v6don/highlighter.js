@@ -39,6 +39,7 @@ const apply_without_tag = f => (str, ce) => {
   let rtn = '';
   const origstr = str;
   let brokentag;
+  let depth = 0;
   while (str) {
     let tagbegin = str.indexOf('<');
     const notag = tagbegin === -1;
@@ -47,11 +48,12 @@ const apply_without_tag = f => (str, ce) => {
     }
     // < か末尾に到達する前に > に遭遇する場合に備える
     for (let gt; (gt = str.indexOf('>')) !== -1 && gt < tagbegin; tagbegin -= gt + 1) {
-      rtn += (gt ? f(str.slice(0, gt), ce) : '') + '>';
+      rtn += str.slice(0, gt) + '>';
       str = str.slice(gt + 1);
       brokentag = true;
     }
-    rtn += tagbegin ? f(str.slice(0, tagbegin), ce) : '';
+    const pretag = str.slice(0, tagbegin);
+    rtn += tagbegin ? depth ? pretag : f(pretag, ce) : '';
     if (notag) break;
 
     let tagend = str.indexOf('>', tagbegin + 1) + 1;
@@ -60,8 +62,18 @@ const apply_without_tag = f => (str, ce) => {
       rtn += str.slice(tagbegin);
       break;
     }
-    rtn += str.slice(tagbegin, tagend);
+    const tag = str.slice(tagbegin, tagend);
+    rtn += tag;
     str = str.slice(tagend);
+    if (depth) {
+      if (tag[1] === '/') { // closing tag
+        depth--;
+      } else if (tag[tag.length - 2] !== '/') { // opening tag
+        depth++;
+      }
+    } else if (tag === '<span class="invisible">') {
+      depth = 1;
+    }
   }
   if (brokentag) console.warn('highlight()に渡された文字列のタグの対応がおかしい → ', origstr);
   return rtn;
@@ -204,8 +216,8 @@ byre.push(...[
     re: /([A-Za-z_\-\u00a0À-ÖØ-öø-ʯ\u0300-\u036f‐'’々\u4e00-\u9fff\uf900-\ufaff\u{20000}-\u{2ebef}]+)《([^》]{1,40})》/ug,
     fmt: (all, base, ruby) => `<ruby>${base}<span class="invisible">《${ruby}》</span><rt><span class="v6don-ruby-rt" data-ruby="${hesc(ruby)}"></span></rt></ruby>`,
   },
-  { tag: true, re: /(<a\s[^>]*>)(.*?:don:.*?)<\/a>/mg, fmt: (all, tag, text) =>
-    tag + text.replace(/:don:/g, '&#58;don&#58;') + '</a>',
+  { tag: true, re: /(<a\s[^>]*>)(.*?<\/a>)/mg, fmt: (all, tag, text) =>
+    tag + text.replace(/:/g, '&#58;'),
   },
   { order: 'post', tag: true, re: /(<(?:p|br\s?\/?)>)((\(?)※.*?(\)?))<\/p>/mg, fmt: (all, br, text, po, pc) =>
     /<br\s?\/?>/.test(text) || (po && !pc || !po && pc) ? all : `${/br/.test(br) ? br : ''}<span class="v6don-kozinkanso">${text}</span></p>`,

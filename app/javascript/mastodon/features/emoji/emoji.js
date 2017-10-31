@@ -7,11 +7,13 @@ let allowAnimations = false;
 const emojify = (str, customEmojis = {}) => {
   let rtn = '', prevcolon = null;
   const tagre = /[<&:]/g;
-  while (tagre.lastIndex < str.length) {
-    const testbegin = tagre.lastIndex;
-    const tag = tagre.exec(str);
+  const invre = /[<&]/g;
+  let re = tagre, depth;
+  while (re.lastIndex < str.length) {
+    const testbegin = re.lastIndex;
+    const tag = re.exec(str);
     if (!tag) {
-      rtn += str.slice(tagre.lastIndex);
+      rtn += str.slice(re.lastIndex);
       break;
     }
     const c = tag[0];
@@ -42,8 +44,21 @@ const emojify = (str, customEmojis = {}) => {
       }
       let next = str.indexOf(tagtab[c], i + 1) + 1;
       if (!next) next = str.length;
+      if (re === tagre && str.startsWith('<span class="invisible">', i)) {
+        re = invre;
+        depth = 1;
+      } else if (re === invre) {
+        if (str[i + 1] === '/') { // closing tag
+          depth--;
+          if (!depth) {
+            re = tagre;
+          }
+        } else if (str[next - 2] !== '/') { // opening tag
+          depth++;
+        }
+      }
       rtn += str.slice(begin, next);
-      tagre.lastIndex = next;
+      re.lastIndex = next;
     }
   }
   return rtn;
