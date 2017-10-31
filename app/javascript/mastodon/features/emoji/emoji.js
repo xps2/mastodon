@@ -5,6 +5,7 @@ const tagtab = { '<' : '>', '&': ';' };
 let allowAnimations = false;
 
 const emojify = (str, customEmojis = {}) => {
+  if (!Object.keys(customEmojis).length) return str;
   let rtn = '', prevcolon = null;
   const tagre = /[<&:]/g;
   const invre = /[<&]/g;
