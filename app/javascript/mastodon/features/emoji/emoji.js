@@ -5,34 +5,48 @@ const tagtab = { '<' : '>', '&': ';' };
 let allowAnimations = false;
 
 const emojify = (str, customEmojis = {}) => {
-  let rtn = '', tag;
-  while ((tag = /[<&:]/.exec(str))) {
-    let i = tag.index, c = tag[0], replacement = '', rend;
+  let rtn = '', prevcolon = null;
+  const tagre = /[<&:]/g;
+  while (tagre.lastIndex < str.length) {
+    const testbegin = tagre.lastIndex;
+    const tag = tagre.exec(str);
+    if (!tag) {
+      rtn += str.slice(tagre.lastIndex);
+      break;
+    }
+    const c = tag[0];
+    let i = tag.index;
     if (c === ':') {
-      if (!(() => {
-        rend = str.indexOf(':', i + 1) + 1;
-        if (!rend) return false; // no pair of ':'
-        const lt = str.indexOf('<', i + 1);
-        if (!(lt === -1 || lt >= rend)) return false; // tag appeared before closing ':'
-        const shortname = str.slice(i, rend);
-        // now got a replacee as ':shortname:'
-        // if you want additional emoji handler, add statements below which set replacement and return true.
+      if (prevcolon === null) {
+        prevcolon = i;
+        rtn += str.slice(testbegin, i);
+      } else {
+        const shortname = str.slice(prevcolon, i + 1);
         if (shortname in customEmojis) {
           const filename = allowAnimations ? customEmojis[shortname].url : customEmojis[shortname].static_url;
-          replacement = `<img draggable="false" class="emojione" alt="${shortname}" title="${shortname}" src="${filename}" />`;
-          return true;
+          const replacement = `<img draggable="false" class="emojione" alt="${shortname}" title="${shortname}" src="${filename}" />`;
+          rtn += replacement;
+          prevcolon = null;
+        } else {
+          rtn += str.slice(prevcolon, i);
+          prevcolon = i;
         }
-        return false;
-      })()) rend = ++i;
+      }
     } else { // <, &
-      rend = str.indexOf(tagtab[c], i + 1) + 1;
-      if (!rend) break;
-      i = rend;
+      let begin;
+      if (prevcolon !== null) {
+        begin = prevcolon;
+        prevcolon = null;
+      } else {
+        begin = testbegin;
+      }
+      let next = str.indexOf(tagtab[c], i + 1) + 1;
+      if (!next) next = str.length;
+      rtn += str.slice(begin, next);
+      tagre.lastIndex = next;
     }
-    rtn += str.slice(0, i) + replacement;
-    str = str.slice(rend);
   }
-  return rtn + str;
+  return rtn;
 };
 
 const emojify_v6don = (text, customEmojis) => emojify(highlight(text, customEmojis), customEmojis);
