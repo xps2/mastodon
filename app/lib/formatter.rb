@@ -95,14 +95,16 @@ class Formatter
     emoji_map = emojis.map { |e| [e.shortcode, full_asset_url(e.image.url(:static))] }.to_h
 
     i                     = -1
+    tag_open              = nil
     inside_tag            = false
     inside_shortname      = false
     shortname_start_index = -1
+    invisible_depth       = 0
 
     while i + 1 < html.size
       i += 1
 
-      if inside_shortname && html[i] == ':'
+      if invisible_depth == 0 && inside_shortname && html[i] == ':'
         shortcode = html[shortname_start_index + 1..i - 1]
         emoji     = emoji_map[shortcode]
 
@@ -118,9 +120,22 @@ class Formatter
         inside_shortname = false
       elsif inside_tag && html[i] == '>'
         inside_tag = false
+        tag = html[tag_open..i]
+        if invisible_depth > 0
+          if tag[1] == '/'
+            invisible_depth -= 1
+          elsif tag[-2] != '/'
+            invisible_depth += 1
+          end
+        else
+          if tag == '<span class="invisible">'
+            invisible_depth = 1
+          end
+        end
       elsif html[i] == '<'
         inside_tag       = true
         inside_shortname = false
+        tag_open = i
       elsif !inside_tag && html[i] == ':'
         inside_shortname      = true
         shortname_start_index = i
