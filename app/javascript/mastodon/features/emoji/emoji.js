@@ -2,13 +2,11 @@ import { autoPlayGif } from '../../initial_state';
 
 import highlight from '../v6don/highlighter';
 
-const tagtab = { '<' : '>', '&': ';' };
-
 const emojify = (str, customEmojis = {}) => {
   if (!Object.keys(customEmojis).length) return str;
   let rtn = '', prevcolon = null;
-  const tagre = /[<&:]/g;
-  const invre = /[<&]/g;
+  const tagre = /[<:]/g;
+  const invre = /[<]/g;
   let re = tagre, depth;
   while (re.lastIndex < str.length) {
     const testbegin = re.lastIndex;
@@ -35,7 +33,7 @@ const emojify = (str, customEmojis = {}) => {
           prevcolon = i;
         }
       }
-    } else { // <, &
+    } else { // <
       let begin;
       if (prevcolon !== null) {
         begin = prevcolon;
@@ -43,7 +41,7 @@ const emojify = (str, customEmojis = {}) => {
       } else {
         begin = testbegin;
       }
-      let next = str.indexOf(tagtab[c], i + 1) + 1;
+      let next = str.indexOf('>', i + 1) + 1;
       if (!next) next = str.length;
       if (re === tagre && str.startsWith('<span class="invisible">', i)) {
         re = invre;
