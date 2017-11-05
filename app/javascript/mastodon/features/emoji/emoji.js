@@ -1,8 +1,8 @@
+import { autoPlayGif } from '../../initial_state';
+
 import highlight from '../v6don/highlighter';
 
 const tagtab = { '<' : '>', '&': ';' };
-
-let allowAnimations = false;
 
 const emojify = (str, customEmojis = {}) => {
   if (!Object.keys(customEmojis).length) return str;
@@ -26,7 +26,7 @@ const emojify = (str, customEmojis = {}) => {
       } else {
         const shortname = str.slice(prevcolon, i + 1);
         if (shortname in customEmojis) {
-          const filename = allowAnimations ? customEmojis[shortname].url : customEmojis[shortname].static_url;
+          const filename = autoPlayGif ? customEmojis[shortname].url : customEmojis[shortname].static_url;
           const replacement = `<img draggable="false" class="emojione" alt="${shortname}" title="${shortname}" src="${filename}" />`;
           rtn += replacement;
           prevcolon = null;
@@ -70,14 +70,12 @@ const emojify_v6don = (text, customEmojis) => emojify(highlight(text, customEmoj
 export { emojify as emojify_original };
 export default emojify_v6don;
 
-export const buildCustomEmojis = (customEmojis, overrideAllowAnimations = false) => {
+export const buildCustomEmojis = (customEmojis) => {
   const emojis = [];
-
-  allowAnimations = overrideAllowAnimations;
 
   customEmojis.forEach(emoji => {
     const shortcode = emoji.get('shortcode');
-    const url       = allowAnimations ? emoji.get('url') : emoji.get('static_url');
+    const url       = autoPlayGif ? emoji.get('url') : emoji.get('static_url');
     const name      = shortcode.replace(':', '');
 
     emojis.push({
