@@ -20,5 +20,12 @@ describe('emoji', () => {
       expect(emojify(':smile')).toEqual(':smile');
     });
 
+    it('avoid emojifying on invisible text', () => {
+      expect(emojify('<a href="http://example.com/test%F0%9F%98%84"><span class="invisible">http://</span><span class="ellipsis">example.com/te</span><span class="invisible">st😄</span></a>'))
+        .toEqual('<a href="http://example.com/test%F0%9F%98%84"><span class="invisible">http://</span><span class="ellipsis">example.com/te</span><span class="invisible">st😄</span></a>');
+      expect(emojify('<span class="invisible">:luigi:</span>', { ':luigi:': { static_url: 'luigi.exe' } }))
+        .toEqual('<span class="invisible">:luigi:</span>');
+    });
+
   });
 });
