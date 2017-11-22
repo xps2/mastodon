@@ -8,7 +8,7 @@ class Request
   def initialize(verb, url, **options)
     @verb    = verb
     @url     = Addressable::URI.parse(url).normalize
-    @options = options
+    @options = (Rails.configuration.x.http_client_proxy[@url.scheme] || {}).merge(options)
     @headers = {}
 
     set_common_headers!

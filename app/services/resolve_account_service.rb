@@ -23,7 +23,7 @@ class ResolveAccountService < BaseService
 
     Rails.logger.debug "Looking up webfinger for #{uri}"
 
-    @webfinger = Goldfinger.finger("acct:#{uri}")
+    @webfinger = Mastodon::Goldfinger.fetch(uri)
 
     confirmed_username, confirmed_domain = @webfinger.subject.gsub(/\Aacct:/, '').split('@')
 
