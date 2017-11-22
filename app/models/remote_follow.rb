@@ -41,7 +41,7 @@ class RemoteFollow
   end
 
   def acct_resource
-    @_acct_resource ||= Goldfinger.finger("acct:#{acct}")
+    @_acct_resource ||= Mastodon::Goldfinger.fetch(@acct)
   rescue Goldfinger::Error, HTTP::ConnectionError
     nil
   end
