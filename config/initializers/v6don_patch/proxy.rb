@@ -5,11 +5,9 @@ def parse_proxy(proxy)
   raise Mastodon::ValidationError, "Unsupported proxy type: #{proxy.scheme}" unless ["http", "https"].include? proxy.scheme
   raise Mastodon::ValidationError, "No proxy host" unless proxy.host
 
-  proxy.host = proxy.host[1...-1] if proxy.host[0] == '[' #IPv6 address
-  opthash = { proxy_address: proxy.host, proxy_port: proxy.port }
-  opthash[:proxy_username] = proxy.user if proxy.user
-  opthash[:proxy_password] = proxy.password if proxy.password
-  ({proxy: opthash})
+  host = proxy.host
+  host = host[1...-1] if host[0] == '[' #IPv6 address
+  {proxy: ({ proxy_address: host, proxy_port: proxy.port, proxy_username: proxy.user, proxy_password: proxy.password }).compact}
 end
 
 Rails.application.configure do
@@ -19,12 +17,10 @@ Rails.application.configure do
   }
 end
 
-module Mastodon
-  module Goldfinger
-    def self.fetch(uri)
-      ssl = !(/\.(onion|i2p)(:\d+)?$/ === uri)
-      proxy = Rails.configuration.x.http_client_proxy[ssl ? 'https' : 'http']
-      ::Goldfinger.finger("acct:#{uri}", proxy, ssl)
-    end
+module Mastodon::Goldfinger
+  def self.fetch(uri)
+    ssl = !(/\.(onion|i2p)(:\d+)?$/ === uri)
+    proxy = Rails.configuration.x.http_client_proxy[ssl ? 'https' : 'http']
+    ::Goldfinger.finger("acct:#{uri}", proxy, ssl)
   end
 end
