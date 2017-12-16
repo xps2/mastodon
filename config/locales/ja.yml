@@ -135,29 +135,29 @@ ja:
       web: Web
     action_logs:
       actions:
-        confirm_user: "%{name} さんが %{target} さんのメールアドレスを確認済みにしました"
-        create_custom_emoji: "%{name} さんがカスタム絵文字 %{target} を追加しました"
-        create_domain_block: "%{name} さんがドメイン %{target} をブロックしました"
-        create_email_domain_block: "%{name} さんがドメイン %{target} をメールアドレス用ブラックリストに追加しました"
-        demote_user: "%{name} さんが %{target} さんを降格しました"
-        destroy_domain_block: "%{name} さんがドメイン %{target} のブロックを外しました"
-        destroy_email_domain_block: "%{name} さんがドメイン %{target} をメールアドレス用ブラックリストから外しました"
-        destroy_status: "%{name} さんが %{target} さんの投稿を削除しました"
-        disable_2fa_user: "%{name} さんが %{target} さんの二段階認証を無効化しました"
-        disable_custom_emoji: "%{name} さんがカスタム絵文字 %{target} を無効化しました"
-        disable_user: "%{name} さんが %{target} さんのログインを無効化しました"
-        enable_custom_emoji: "%{name} さんがカスタム絵文字 %{target} を有効化しました"
-        enable_user: "%{name} さんが %{target} さんのログインを有効化しました"
-        memorialize_account: "%{name} さんが %{target} さんを追悼アカウントページに登録しました"
-        promote_user: "%{name} さんが %{target} さんを昇格しました"
-        reset_password_user: "%{name} さんが %{target} さんのパスワードをリセットしました"
-        resolve_report: "%{name} さんがレポート %{target} を解決済みにしました"
-        silence_account: "%{name} さんが %{target} さんをサイレンスにしました"
-        suspend_account: "%{name} さんが %{target} さんを停止しました"
-        unsilence_account: "%{name} さんが %{target} さんのサイレンスを解除しました"
-        unsuspend_account: "%{name} さんが %{target} さんの停止を解除しました"
-        update_custom_emoji: "%{name} さんがカスタム絵文字 %{target} を更新しました"
-        update_status: "%{name} さんが %{target} さんの投稿を更新しました"
+        confirm_user: "%{name}さんが%{target}さんのメールアドレスを確認済みにしました"
+        create_custom_emoji: "%{name}さんがカスタム絵文字%{target}を追加しました"
+        create_domain_block: "%{name}さんがドメイン%{target}をブロックしました"
+        create_email_domain_block: "%{name}さんがドメイン%{target}をメールアドレス用ブラックリストに追加しました"
+        demote_user: "%{name}さんが%{target}さんを降格しました"
+        destroy_domain_block: "%{name}さんがドメイン%{target}のブロックを外しました"
+        destroy_email_domain_block: "%{name}さんがドメイン%{target}をメールアドレス用ブラックリストから外しました"
+        destroy_status: "%{name}さんが%{target}さんの投稿を削除しました"
+        disable_2fa_user: "%{name}さんが%{target}さんの二段階認証を無効化しました"
+        disable_custom_emoji: "%{name}さんがカスタム絵文字%{target}を無効化しました"
+        disable_user: "%{name}さんが%{target}さんのログインを無効化しました"
+        enable_custom_emoji: "%{name}さんがカスタム絵文字%{target}を有効化しました"
+        enable_user: "%{name}さんが%{target}さんのログインを有効化しました"
+        memorialize_account: "%{name}さんが%{target}さんを追悼アカウントページに登録しました"
+        promote_user: "%{name}さんが%{target}さんを昇格しました"
+        reset_password_user: "%{name}さんが%{target}さんのパスワードをリセットしました"
+        resolve_report: "%{name}さんがレポート%{target}を解決済みにしました"
+        silence_account: "%{name}さんが%{target}さんをサイレンスにしました"
+        suspend_account: "%{name}さんが%{target}さんを停止しました"
+        unsilence_account: "%{name}さんが%{target}さんのサイレンスを解除しました"
+        unsuspend_account: "%{name}さんが%{target}さんの停止を解除しました"
+        update_custom_emoji: "%{name}さんがカスタム絵文字%{target}を更新しました"
+        update_status: "%{name}さんが%{target}さんの投稿を更新しました"
       title: 操作履歴
     custom_emojis:
       copied_msg: 絵文字のコピーをローカルに作成しました
@@ -343,7 +343,7 @@ ja:
     warning: このデータは気をつけて取り扱ってください。不特定多数の人と共有しないでください!
     your_token: アクセストークン
   auth:
-    agreement_html: 登録すると <a href="%{rules_path}">利用規約</a> と <a href="%{terms_path}">プライバシーポリシー</a> に同意したことになります。
+    agreement_html: 登録すると<a href="%{rules_path}">利用規約</a>と<a href="%{terms_path}">プライバシーポリシー</a>に同意したことになります。
     change_password: セキュリティ
     delete_account: アカウントの削除
     delete_account_html: アカウントを削除したい場合、<a href="%{path}">こちら</a>から手続きが行えます。削除する前に、確認画面があります。
@@ -663,7 +663,7 @@ ja:
 
       <h3 id="coppa">子供のオンライン・プライバシー保護法</h3>
 
-      <p>このサイト、製品、サービスはすべて13歳以上の人を対象としております。このサーバーが米国にあり、13歳未満の場合はCOPPA (<a href="https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act">Children's Online Privacy Protection Act</a>) にもとづいてこのサイトを使用しないでください。</p>
+      <p>このサイト、製品、サービスはすべて13歳以上の人を対象としております。このサーバーが米国にあり、13歳未満の場合はCOPPA(<a href="https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act">Children's Online Privacy Protection Act</a>)にもとづいてこのサイトを使用しないでください。</p>
 
       <h3 id="online">オンライン限定のプライバシーポリシー</h3>
 
@@ -693,7 +693,7 @@ ja:
     enabled_success: 二段階認証が有効になりました
     generate_recovery_codes: リカバリーコードを生成
     instructions_html: "<strong>Google Authenticatorか、もしくはほかのTOTPアプリでこのQRコードをスキャンしてください。</strong>これ以降、ログインするときはそのアプリで生成されるコードが必要になります。"
-    lost_recovery_codes: リカバリーコードを使用すると携帯電話を紛失した場合でもアカウントにアクセスできるようになります。 リカバリーコードを紛失した場合もここで再生成することができますが、古いリカバリーコードは無効になります。
+    lost_recovery_codes: リカバリーコードを使用すると携帯電話を紛失した場合でもアカウントにアクセスできるようになります。リカバリーコードを紛失した場合もここで再生成することができますが、古いリカバリーコードは無効になります。
     manual_instructions: 'QRコードがスキャンできず、手動での登録を希望の場合はこのシークレットコードを利用してください。:'
     recovery_codes: リカバリーコード
     recovery_codes_regenerated: リカバリーコードが再生成されました
